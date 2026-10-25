@@ -74,6 +74,10 @@ RESCUE(window-id) --[target lost, topology invalid, global emergency disable]-->
 - Underlying Windows constraints include application-defined minimum tracking sizes (`WM_GETMINMAXINFO`) and the limits of cross-process window repositioning; **success requires real Windows integration testing**.
 - Separate **agreed functionality** (automatic detection + user-activated start, four-way shifting, concurrent independent per-window rescue, one focus-follow/manual-picker **movable/collapsible floating panel**) from **undecided UX** (offer/banner style, panel startup location and persistence, post-last-session visibility, precise manual-override precedence, repeated-offer policy, step sizes and reset behavior).
 
+### Rescue directional interaction
+
+Each directional button supports a fixed-distance tap and a continuous press-and-hold shift. Step distance and hold speed are independently user configurable. Continuous motion stops when the button is released. Commands remain associated with the selected rescue session; numeric defaults and hold timing require validation.
+
 ## Main area, windows and desktop shell
 
 The main work area is the default placement and maximize rectangle. The dedicated taskbar is hosted within it. Ordinary windows may be moved into auxiliary areas by the user; a best-effort rescue should not fight legitimate repositioning.
