@@ -28,6 +28,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide **guided first-run setup wizard** (physical target -> damaged rectangle -> main work rectangle -> safety review), with **later detailed-settings editing**.
 - [x] Decide **60-second confirm-or-rollback trial** for first-run activation; unconfirmed settings are not saved, timeout returns to the prior confirmed state or disabled first-run state.
 - [x] Decide **60-second trial for critical detailed-settings changes only** (dead zone, main area, monitor selection and pointer guarding/routing); cosmetic settings apply without trial.
+- [x] Decide **dedicated taskbar docking and show/hide changes** also require a 60-second trial; its cosmetic color/icon changes apply immediately.
 - [ ] Resolve unresolved parameters and feasibility questions identified in the behavior contract.
 
 ## Phase 1 — safe geometry and pointer proof
@@ -73,6 +74,8 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 ## Phase 3 — stand-alone Safe Desktop Shell and first release
 
 - [ ] Implement **top, bottom, left, right** docking within main with responsive horizontal/vertical bar layout; default bottom and user-selectable visibility.
+- [ ] For **dedicated bar** docking and visibility changes, show an accessible 60-second confirm-or-rollback trial. Keep a keyboard recovery path even when testing hidden state; appearance-only edits do not require the countdown.
+- [ ] Validate cancel/expiry returns to confirmed docking/visibility, mixed critical/cosmetic edits use the critical gate, and a missing/moved monitor fails open rather than restoring invalid geometry.
 - [ ] Dedicated taskbar entirely inside the main work area and responsive for narrow layouts.
 - [ ] Launcher/search, running/pinned apps, Explorer, Settings, clock/battery, audio/network access, power controls.
 - [ ] Select a reversible method for dealing with the native taskbar; document incompatible tray/notification features.
@@ -105,7 +108,7 @@ For every future PR: list changed requirement IDs, actual build/test commands, O
 
 1. Push-through **trial sensitivity** of 40 px-equivalent (final threshold, input units, accumulation/decay/reset), diagonals, and Windows-topology-preserving destination mapping.
 2. Main-area best-fit algorithm, too-small dimensions and auxiliary-area behavior.
-3. Wizard on-screen placement/recovery for users with preexisting damaged displays, plus **borderline visibility/docking options that may remove the last accessible control route**. **Guided steps, detailed-settings editing and 60-second rollback for first-run and critical post-setup edits are agreed.**
+3. Wizard on-screen placement/recovery for users with preexisting damaged displays, plus **keyboard recovery and on-screen confirmation when the dedicated taskbar is hidden during its agreed 60-second trial**. **Guided steps, detailed-settings editing and 60-second rollback for first-run and critical post-setup edits are agreed.**
 4. Native taskbar reversible hiding/coexistence (candidate Safe-first / both / native-first), effect on external monitors, and third-party tray/notification access.
 5. Which everyday shell operations work safely from the dedicated UI across Windows versions.
 6. Monitor identity, saved profiles across topology changes, and auto-start mechanics.
