@@ -118,6 +118,12 @@ Engineering constraints to validate on Windows: use a monotonic deadline, handle
 
 Before applying a user edit, classify its impact on reachability. For a critical diff, capture the last confirmed configuration and its current topology identity, validate the new geometry in a draft, and require a deliberate 60-second trial and confirmation before persisting or changing the sign-in profile. Batch edits mixing cosmetic and critical changes as one critical transaction; do not partially persist its critical subset. On cancel/expiry restore the previous confirmed profile **only after revalidation against current monitor identity/topology**; otherwise enter a safe disabled/fail-open state. For purely cosmetic settings, including dedicated-bar theme and icon appearance, apply and persist without a countdown. For dedicated-bar docking or visibility, keep the previously confirmed bar configuration and last reachable recovery mechanism available throughout the 60-second trial; rollback it on timeout/cancel, subject to current monitor validation. Recheck that neither route removes keyboard emergency disable. Do not interpret visual preferences as noncritical if they relocate/remove the final accessible control surface.
 
+### Emergency shortcut and fail-open shutdown
+
+A **global shortcut on the normal user desktop** must execute emergency disable on a single activation: no confirmation prompt, hold timer or modal UI dependency. Give release of pointer interception/topology gating highest priority; stop WindowGuard and current rescue-hold movement, invalidate active rescue exception sessions, and cancel any pending configuration trial without committing the draft. The emergency route must not wait for window repositioning or the 60-second timeout. Suppress immediate same-session auto-reactivation after emergency disable. Re-enabling requires deliberate user action and revalidation. **Whether this disabled preference survives future sign-ins remains an open user decision.**
+
+Investigate the least intrusive user-level hotkey registration for the chosen chord and conflicts with Windows/other applications; avoid keystroke recording. Handle repeat key-down idempotently. Do not claim operation on secure UAC/logon desktops or exclusive fullscreen without evidence. Test that the emergency path can be reached when the dedicated taskbar and rescue panel are hidden, and ensure unexpected process exit releases any transient interception.
+
 ## Startup, persistence and recovery
 
 ```text
