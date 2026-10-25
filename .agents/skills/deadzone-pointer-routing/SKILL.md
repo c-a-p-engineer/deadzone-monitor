@@ -16,7 +16,7 @@ Read [the behavior contract](../../../docs/behavior-contract.md) for the agreed 
 1. Before any interception, require validated target identity, keyboard-only emergency disable and a safe initial/restore activation policy.
 2. Separate a pure geometry/portal state machine from Win32 event acquisition; never equate clamped cursor position with repeated attempted movement.
 3. On first entry attempt, **stop** at the allowed boundary. Continue accumulating *intentional inward attempted movement* while blocked; only after the configurable threshold is crossed may a jump be emitted.
-4. Keep threshold, gesture reset/decay, diagonal/corner interpretation, button-drag behavior and destination coordinate mapping configurable/testable. Their exact values are **open decisions**, not hard-coded requirements.
+4. On retreat into healthy space, reset accumulated blocked-edge push to zero; later contact starts a fresh gesture. Motion tangential to a still-contacted edge is not retreat. Keep threshold, jitter handling, diagonal/corner behavior and destination mapping configurable/testable; precise numeric values are open.
 5. Resolve a reachable region behind the excluded rectangle (internal healthy area or external monitor); preserve a workable reverse path. If there is no destination, stop without teleporting.
 6. Keep callbacks bounded and fast, avoid synthetic-event feedback, avoid spin/polling loops and avoid intercepting unrelated input.
 7. On ambiguous topology, input adapter failure, invalid settings, explicit hotkey or exit, release interception and return OS-native pointer behavior.
