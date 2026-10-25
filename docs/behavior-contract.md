@@ -15,6 +15,7 @@ The initial user scenario is a broken left portion of a built-in laptop panel, b
 | Decision | Status | Meaning |
 | --- | --- | --- |
 | Arbitrary rectangular dead zone | **Agreed, initial version** | A user chooses any X/Y/width/height rectangle on a selected display; not limited to screen halves or edges. |
+| First-run configuration | **Agreed: guided wizard (A)** | Step through physical monitor selection, dead-zone rectangle, user-selected main intact rectangle, and preview/safety review before enabling; advanced settings remain editable later. |
 | Rectangle selection UI | **Agreed direction** | Visual preview/drag selection and editable physical-pixel coordinates; exact controls remain design work. |
 | Number of zones | **Initial design boundary** | One rectangular dead zone per selected monitor profile initially; multiple regions are a future extension, not yet agreed for initial delivery. |
 | Workspaces | **Agreed** | Exactly one user-selected **main work area**, with remaining intact areas available as **auxiliary areas**. |
@@ -52,6 +53,7 @@ The initial user scenario is a broken left portion of a built-in laptop panel, b
 
 | ID | Required behavior | Verifiable acceptance |
 | --- | --- | --- |
+| DZ-25 | Provide a **guided first-run setup wizard** and editable detailed settings after setup. | The user can complete target-monitor selection, visual or numeric dead-zone entry, suggested/overridden main rectangle, and preview/safety review in sequence before deliberate activation. Keyboard operation and a return/edit route remain accessible on a damaged display; after setup, detailed settings can modify and validate these values without reinstalling. |
 | DZ-01 | Select a physical target display and define a rectangular dead zone anywhere on it. | Coordinates are editable in physical px, visual preview matches them, and a center rectangle as well as an edge rectangle are accepted. |
 | DZ-02 | Select one intact main work rectangle, leaving all other healthy pixels usable as auxiliary space. | No main rectangle overlaps the forbidden area; selection can be changed without editing code; auxiliary areas remain pointer-reachable. |
 | DZ-03 | Prevent supported normal-desktop pointer movement into the dead zone while guarding is enabled. | Boundary and high-speed entry tests do not leave the pointer in the forbidden region under the supported input paths. |
@@ -114,6 +116,17 @@ Initial completed Mode A should cover **functional access**, not a pixel-perfect
 
 Native taskbar hiding/repositioning must not require corrupting shell state; an imperfect but reversible fallback is preferable to a fragile Explorer hack.
 
+## Guided onboarding — initial release agreement
+
+On **first run**, use a guided wizard rather than exposing all settings at once:
+
+1. **Select target display:** identify the intended physical monitor from the currently connected displays. Do not assume primary or leftmost.
+2. **Define damaged rectangle:** offer a scaled, non-destructive representation and numeric X/Y/width/height entry in local physical pixels; allow review and correction without interacting with broken pixels directly.
+3. **Select main intact rectangle:** offer a best-fit candidate and allow explicit override; keep other intact pixels as auxiliary space.
+4. **Review and safety preview:** show the chosen display/areas and emergency keyboard escape; require deliberate opt-in before activation. No silent activation while moving between wizard steps.
+
+After onboarding, provide a **separate detailed-settings view** to revisit and edit the target selection, damaged rectangle, main intact rectangle, push-through settings and dedicated shell preferences. Revalidate changes and preserve a keyboard-operable cancellation/recovery path. The **trial/confirmation timeout and automatic rollback behavior are not yet decided**; do not imply that a countdown has already been agreed.
+
 ## Lifecycle and safety
 
 1. **First run:** show target/rectangle/main-area preview; make emergency keyboard disable discoverable and testable; require explicit first enable.
@@ -161,11 +174,13 @@ Deterministic geometry tests alone are insufficient: pointer hooks, Windows shel
 - Test the proposed **40 px-equivalent** sensitivity against alternative user-selectable settings; units and default may be revised from observed data.
 - Verify changing dedicated/native taskbar visibility is reversible and does not damage Windows Explorer or unexpectedly change taskbar behavior on other displays.
 
+- Wizard acceptance: simulate a partly unusable built-in screen with and without an external monitor. Verify keyboard-only completion/cancel, correct monitor and physical-pixel rectangle preview, user override of main area, no interception before opt-in, and successful later detailed-settings edits.
+
 ## Open decisions (not silently treated as agreed)
 
 - Final calibrated push-through distance/units (trial default 40 px-equivalent), movement accumulation/reset, corner handling, and unambiguous destination mapping that respects the existing Windows layout.
 - Precise main-area automatic suggestion and restrictions for very small surviving areas.
 - Whether a center hole's tiny surviving strips are suitable auxiliary areas or should be optional.
 - Reversible Windows-native taskbar coexistence/hiding strategy (including whether proposed Safe-first / both / native-first presets are feasible), plus third-party tray/notification fallback.
-- Settings UI details, chosen hotkey, startup implementation, profile matching and monitor identity fidelity.
+- Wizard preview presentation and keyboard-only initial positioning on a damaged screen; **trial duration and confirmation/automatic rollback policy**; chosen hotkey, startup implementation, profile matching and monitor identity fidelity.
 - Which difficult system dialogs/overlays require alternate access rather than relocation.
