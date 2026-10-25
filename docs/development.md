@@ -1,6 +1,6 @@
 # Development plan and verification ledger
 
-**Checkpoint (2026-10-25):** initial repository bootstrap plus a new agreed-requirements pass. **No application implementation, GitHub Actions workflow, Windows integration result or release exists yet.** This plan distinguishes signed-off product behavior from unverified implementation techniques.
+**Checkpoint (2026-10-25):** core source implementation has started on `feat/phase1-geometry-router`; there is **no usable Windows executable, verified Windows input hook, CI workflow or release**. The C# geometry and router source and test scenarios exist, but **.NET build/tests have not run** in this environment. This plan distinguishes code written from code verified on Windows.
 
 The owner of requirements is [behavior-contract.md](behavior-contract.md); do not use this task plan as a conflicting specification.
 
@@ -41,6 +41,18 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide **default emergency chord plus user customization**, requiring successful registration/keyboard-only test before replacing a working binding; unsuccessful changes revert.
 - [x] Decide **emergency disable stays active across app restarts, Windows sign-outs and reboots** until deliberate user re-enable; auto-login restoration must respect the persisted disabled latch.
 - [ ] Resolve unresolved parameters and feasibility questions identified in the behavior contract.
+
+## First implementation slice — source added, validation pending
+
+- [x] Add an isolated **.NET 10 core project** with validated virtual-desktop physical pixel geometry and monitor identity; never assume the laptop is primary or origin (0,0).
+- [x] Add pure main-area candidate enumeration and area/width/height recommendation, callable before user activation.
+- [x] Add pure push-through contact state machine: first touch blocks, inward-normal-only accumulation, stable first-contact corner selection, reset on retreat, threshold and forward landing.
+- [x] Add basic scenario source tests for negative origins, offset/gapped/ambiguous external monitors, corner ties, initial overshoot, retreat and narrow main work areas.
+- [ ] **Compile and run** the .NET 10 scenario harness on a host with the SDK; fix any errors and record the actual output. No SDK is installed in the current authoring environment.
+- [ ] Build a real **Windows-only input adapter** behind an explicit manual trial, but only after validating keyboard emergency disable and fail-open on hardware.
+- [ ] Add Win11 physical-device evidence: mouse/touchpad deltas, DPI/rotation, sleep/resume, external monitor layout, and process-exit recovery. No test evidence exists yet.
+
+Initial implementation remains a **safe core-only prototype**: it cannot intercept or trap the Windows pointer.
 
 ## Phase 1 — safe geometry and pointer proof
 
