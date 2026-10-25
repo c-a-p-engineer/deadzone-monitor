@@ -18,10 +18,11 @@ The initial user scenario is a broken left portion of a built-in laptop panel, b
 | Rectangle selection UI | **Agreed direction** | Visual preview/drag selection and editable physical-pixel coordinates; exact controls remain design work. |
 | Number of zones | **Initial design boundary** | One rectangular dead zone per selected monitor profile initially; multiple regions are a future extension, not yet agreed for initial delivery. |
 | Workspaces | **Agreed** | Exactly one user-selected **main work area**, with remaining intact areas available as **auxiliary areas**. |
-| Pointer crossing | **Agreed: push-through (B)** | A pointer at a damaged-region boundary stops first; continued intentional movement in the same direction causes a jump to a valid area. Not an immediate edge-touch jump. |
-| External screens | **Agreed** | Reach external monitors and return even when a dead zone lies along the physical virtual-desktop path. |
-| Windows | **Agreed** | Ordinary windows appear, can be rescued, and maximize within the main work area, subject to Windows/app limitations. |
-| Taskbar | **Agreed** | Prefer a dedicated taskbar fitting completely inside the main intact work area; native taskbar fidelity is secondary. |
+| Pointer crossing | **Agreed: push-through (B)** | A pointer stops at the boundary first; further deliberate inward movement jumps to reachable healthy space. Sensitivity is user-adjustable; 40 px-equivalent is a *provisional* default for testing, not a measured optimum. |
+| External screens | **Agreed** | Use Windows' existing monitor layout, native physical sizes and relative positions to choose crossing destinations without changing OS display configuration. Reach external screens and return even when dead pixels intervene. |
+| Windows | **Agreed** | Keep supported windows wholly inside intact space when possible: move first, resize if needed, and use the main rectangle for maximize. Do not disturb valid auxiliary placements. |
+| Taskbar | **Agreed** | Dedicated familiar Windows-style taskbar fitted completely inside the main rectangle, dockable on its top, bottom, left or right edge (default bottom), with suitable horizontal/vertical layout. |
+| Window dragging | **Agreed: stop at boundary (A)** | During a drag, prevent the supported window rectangle from crossing into the dead zone; do not permit temporary hidden overlap and wait for mouse release. Minimum-size exceptions require safe fallback. |
 | Everyday shell interaction | **Agreed** | A dedicated launch/control UI may replace day-to-day access to native Start/notifications/controls. It need not clone the whole Windows shell. |
 | Standalone laptop | **Agreed** | Common daily actions must be reachable without an external monitor. |
 | Auto start/restore | **Agreed** | After initial opt-in, subsequent Windows sign-ins should auto-start and restore the prior enabled profile. |
@@ -35,7 +36,8 @@ The initial user scenario is a broken left portion of a built-in laptop panel, b
 - **Allowed area:** the selected display bounds minus the dead zone, plus entirely accessible external displays.
 - **Main work area:** one user-chosen axis-aligned rectangle wholly within an intact part of the target display. The UI may offer a best-fit suggestion; the user can choose another valid rectangle. It hosts maximize and the dedicated taskbar.
 - **Auxiliary areas:** any other intact display portions outside the main work area. They remain pointer-reachable and can host manually placed windows. These are **not** independent Windows monitors and need not be separate, nonoverlapping 'virtual monitor' objects.
-- **Push-through:** an explicit continued inward movement at an excluded boundary. Sensitivity/threshold should be adjustable; a numeric default, direction-change/reset rules, jump coordinate mapping, and measurement of movement delta are **not yet fixed**.
+- **Push-through:** explicit continued inward movement at the excluded boundary. Users can tune sensitivity. A 40 px-equivalent threshold is a **trial default**, not a validated physical mouse-distance measurement; input units, reset/decay rules and destination mapping are **still open**.
+- **Monitor layout:** retain actual Windows monitor identifiers, resolution, relative layout and physical geometry. Jump mapping uses the existing topology; it does not reconfigure the displays.
 
 ## Behavioral requirements and acceptance
 
@@ -47,7 +49,9 @@ The initial user scenario is a broken left portion of a built-in laptop panel, b
 | DZ-04 | Use **push-through** crossing between reachable intact areas, not immediate jump-on-contact. | At a boundary, first stop; continued movement deliberately transfers to a valid target. No reachable target means stop (no spurious teleport). Reverse travel works. |
 | DZ-05 | Preserve normal access to every connected external monitor. | Left/right external screens, two external screens, negative coordinates, and dead-zone crossings allow deliberate outward and return movement. |
 | DZ-06 | Prefer main-area placement for ordinary new/restore/maximize windows, and rescue inaccessible windows. | Ordinary supported windows remain operable on the intact screen; auxiliary placement by user is preserved where possible; external-display windows are not repositioned. |
-| DZ-07 | Fit a dedicated taskbar/launcher into the **main** intact rectangle. | It never spans the excluded region and can launch/switch applications and provide access to essential system operations. |
+| DZ-14 | Keep the full bounds of a supported window out of the dead zone **during manual dragging**. | While the mouse button remains down, a dragged window stops at the last valid bounds before an overlap; no late snap-back, jitter, or repeated fights with the application. If OS/app restrictions prevent full containment, preserve recovery and show an exception. |
+| DZ-07 | Fit a dedicated taskbar/launcher into the **main** intact rectangle. | It docks to any of the main rectangle's **four edges**, default bottom, supports horizontal/vertical layouts and never spans excluded pixels; it launches/switches apps and offers essential controls. |
+| DZ-15 | Offer familiar and accessible taskbar presentation, with dedicated-bar show/hide and reversible native coexistence options. | User can select a dedicated-bar visibility preference without losing a way to operate Windows; native taskbar behavior is documented honestly and no per-monitor hide feature is claimed without Windows testing. |
 | DZ-08 | Support everyday laptop-only usage through dedicated UI, even if Windows-native panels cannot be repositioned. | With all external screens unplugged, user can start/switch apps, open files/settings, adjust volume/network, see clock/battery, and reach power controls from intact space, where OS capabilities permit. |
 | DZ-09 | Persist target identity, zone, main rectangle, crossing preferences, and UI settings locally. | Sign-out/reboot and the next sign-in restore the last **explicitly enabled and validated** profile without requiring repeated manual setup. |
 | DZ-10 | Auto-launch **after** Windows sign-in. First-run activation requires user review. | First setup shows safe preview/hotkey; subsequent successful sign-ins restore an enabled validated profile. Do not activate on unknown monitors or invalid data. |
@@ -67,6 +71,8 @@ Initial completed Mode A should cover **functional access**, not a pixel-perfect
 - A compact layout if the selected main work area is narrow.
 
 **Not promised by this agreement:** full third-party system tray mirroring, unrestricted access to every vendor panel, perfect native Start/notification center positioning, or exact replication of all Windows notification actions. Investigate access alternatives and document any remaining coverage gaps before calling Mode A complete.
+
+**Taskbar presentation:** The dedicated bar is dockable on **top / bottom / left / right** of the chosen *main work rectangle*, not the full physical panel, and defaults to bottom. Users want a Windows-native-like appearance with improved usability in narrow healthy areas. User-selectable visibility is required. **Safe-first, show-both and native-first** are *proposed coexistence presets*, not proven native Windows per-monitor hide mechanisms. Explore safe reversible options; a native bar on another monitor must not be broken by this tool.
 
 Native taskbar hiding/repositioning must not require corrupting shell state; an imperfect but reversible fallback is preferable to a fragile Explorer hack.
 
@@ -102,11 +108,20 @@ A reliable emergency hotkey combination, conflicting shortcuts, safe reactivatio
 
 Deterministic geometry tests alone are insufficient: pointer hooks, Windows shell integration, lifecycle and user safety **require real Windows desktop/manual tests**. The implementation/release status must remain distinct from these agreed outcomes.
 
+## Additional acceptance checks from the 2026-10-25 discussion
+
+- Check live dragging against a dead rectangle along each edge and a rectangle in the middle, including dragging windows near every corner; a supported window must not overlap dead pixels even before the mouse button is released.
+- Check oversized/minimum-size windows and supported user-accessible fallback instead of claiming impossible full containment.
+- Verify the dedicated taskbar fits inside main for **all four docking directions** and stays navigable in a narrow work rectangle.
+- Confirm push-through uses Windows' existing monitor arrangement (including negative virtual coordinates) without changing resolution, primary assignment or screen positions.
+- Test the proposed **40 px-equivalent** sensitivity against alternative user-selectable settings; units and default may be revised from observed data.
+- Verify changing dedicated/native taskbar visibility is reversible and does not damage Windows Explorer or unexpectedly change taskbar behavior on other displays.
+
 ## Open decisions (not silently treated as agreed)
 
-- Push-through distance/units, movement accumulation/reset policy, edge corners, repeat jumps and destination mapping.
+- Final calibrated push-through distance/units (trial default 40 px-equivalent), movement accumulation/reset, corner handling, and unambiguous destination mapping that respects the existing Windows layout.
 - Precise main-area automatic suggestion and restrictions for very small surviving areas.
 - Whether a center hole's tiny surviving strips are suitable auxiliary areas or should be optional.
-- Native taskbar coexistence/hiding strategy and third-party notification/tray fallback.
+- Reversible Windows-native taskbar coexistence/hiding strategy (including whether proposed Safe-first / both / native-first presets are feasible), plus third-party tray/notification fallback.
 - Settings UI details, chosen hotkey, startup implementation, profile matching and monitor identity fidelity.
 - Which difficult system dialogs/overlays require alternate access rather than relocation.

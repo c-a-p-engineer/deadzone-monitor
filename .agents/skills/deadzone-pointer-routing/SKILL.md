@@ -21,6 +21,12 @@ Read [the behavior contract](../../../docs/behavior-contract.md) for the agreed 
 6. Keep callbacks bounded and fast, avoid synthetic-event feedback, avoid spin/polling loops and avoid intercepting unrelated input.
 7. On ambiguous topology, input adapter failure, invalid settings, explicit hotkey or exit, release interception and return OS-native pointer behavior.
 
+## Current interaction choices
+
+- User-adjustable push sensitivity, with a **provisional 40 px-equivalent** threshold for initial testing; exact input units and reset policy require evidence, not guesses.
+- Derive portal candidates from the **existing Windows monitor geometry**. Do not reconfigure screen resolution/position to implement cursor crossing.
+- When a window is being dragged, coordinate with WindowGuard: preserve the *whole window* in intact space, even if the cursor can intentionally push through. Do not auto-transfer a held window into forbidden pixels.
+
 ## Verification
 
 - Edge and center forbidden rectangles; unequal sizes, negative origins, mixed DPI, gap and orientation.

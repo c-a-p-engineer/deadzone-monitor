@@ -8,9 +8,9 @@ A Windows utility **in design** to make a computer with a partly damaged screen 
 
 - Configure an **arbitrary rectangular dead zone** on a selected display, with physical-pixel X/Y/width/height and visual preview. Not limited to halves or edges.
 - Select one intact **main work area** for window maximization and a compact dedicated taskbar, while keeping other intact pixels available as auxiliary regions.
-- **Push-through cursor jump:** stop at the forbidden boundary first, then jump into another reachable healthy area after intentional further movement. Preserve access to external monitors and back.
-- Keep common windows usable on the remaining visible area (best effort given Windows and app limitations).
-- Provide a dedicated launcher/taskbar and essential system controls so a laptop can be used **without any external monitor**, even where native Windows shell panels cannot be relocated.
+- **Push-through cursor jump:** stop at the forbidden boundary first, then jump into reachable healthy space after further intentional movement. Sensitivity is user-configurable; **40 px-equivalent is a trial default**, not a measured optimum. Preserve existing Windows monitor resolutions/layout and access to external screens.
+- Keep supported windows inside intact space: move first, resize if needed, maximize within main, and **stop active window dragging at the forbidden boundary** instead of snapping back only on mouse release (best effort for OS/app minimum sizes).
+- Provide a familiar dedicated launcher/taskbar **dockable on all four edges of the main work rectangle** (bottom default) with visibility/coexistence choices, plus essential system controls, so a laptop can be used **without any external monitor**.
 - On subsequent **Windows sign-ins**, automatically start and restore the previous valid enabled settings. First run requires explicit setup; an accessible keyboard-only emergency disable is mandatory.
 - Work offline as a normal user with no telemetry or driver requirement.
 
@@ -20,7 +20,7 @@ A Windows utility **in design** to make a computer with a partly damaged screen 
 
 Initially one rectangular excluded area per selected monitor profile; the data model may later support multiple damaged regions. The main area is not a new Windows monitor. Protected UAC/login screens, every fullscreen game, native Start/notification positioning, and all third-party tray icons are not guaranteed.
 
-The **push-through threshold, portal destinations, Windows taskbar compatibility and exact system-control implementation** remain to be resolved by prototypes and user testing. Product acceptance is documented, but functionality is not claimed as shipped.
+The **final push-through threshold/units, portal destination mapping, native Windows taskbar coexistence and exact system-control implementation** remain to be resolved by prototypes and user testing. Product acceptance is documented, but functionality is not claimed as shipped.
 
 ## Read the specs
 

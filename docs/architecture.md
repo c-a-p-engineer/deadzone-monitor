@@ -88,6 +88,15 @@ A keyboard-only emergency disable must work without a visible shell, tray or ext
 - Shell app and pointer hook failures are separately contained; no open-ended synchronization, hot-loop or recursive warp.
 - New GitHub Actions workflows and publishing/signing require explicit maintainer approval under [AGENTS.md](../AGENTS.md).
 
+## Further agreed UX and proposed implementation consequences (2026-10-25)
+
+- **Push threshold:** expose user-facing sensitivity; start usability prototyping at approximately **40 px-equivalent extra inward motion**, but do not assume cursor-position changes during clipping provide that attempted delta. Calibrate actual units and reset rules on real hardware.
+- **Windows monitor topology:** preserve OS-configured resolutions, positions, monitor numbering/identity and primary selection. Determine candidate destination from existing relative monitor placement, and redirect across dead pixels only after intentional inward push. Handling ambiguous or nonaligned layouts remains a prototype question.
+- **Main area:** one user-selectable intact **rectangle**; maximize and custom taskbar are bounded by it. Other intact pixels remain auxiliary, not a second logical Windows monitor.
+- **WindowGuard during drag:** separate active drag clamping from post-creation/restore rescue. Clamp proposed *window bounds* before they overlap dead pixels, not only the cursor hotspot. Prefer movement before resizing. If a window exceeds the largest available intact rectangle or the application disallows resize, cease futile reposition loops and provide a keyboard-usable fallback.
+- **Cursor versus window drag conflict:** the pointer may push-through freely while the dragged window must stay intact; decide and test whether to suppress a window transfer or support a separately validated transfer to another fully accommodating area. Never teleport a held window into an invalid placement.
+- **SafeDesktopShell:** dock top/bottom/left/right **inside the main rectangle**; default bottom; switch horizontal/vertical layouts. Offer a visible/hidden dedicated-bar preference. Native-bar coexistence presets and reversible OS configuration approaches are proposals, subject to Windows 11 integration tests, not guarantees.
+
 ## Next evidence needed
 
 Windows proof of concept to validate push-through delta capture, external portal behavior, emergency disable and shell/window interactions. Unit geometry tests cannot establish OS login-screen support or third-party shell compatibility. Track rollout and remaining questions in [development.md](development.md).

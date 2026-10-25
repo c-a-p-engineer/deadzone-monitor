@@ -13,12 +13,16 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide **push-through cursor jump** rather than immediate jump.
 - [x] Decide standalone usability and dedicated taskbar/launcher over native shell fidelity.
 - [x] Decide last-settings restoration after user sign-in and emergency disable.
+- [x] Decide **four-edge docking** for the dedicated taskbar (bottom by default) and user-oriented native coexistence/visibility goals.
+- [x] Decide **move first, resize only as needed** for normal windows and **boundary-stop while actively dragging**, not snap-back on release.
+- [x] Preserve Windows' monitor sizes/relative layout; allow user-adjustable push-through sensitivity with **40 px-equivalent as a tentative starting value**.
 - [ ] Resolve unresolved parameters and feasibility questions identified in the behavior contract.
 
 ## Phase 1 — safe geometry and pointer proof
 
 - [ ] Pure geometry model for arbitrary rectangle, main/auxiliary regions and external screens.
 - [ ] Validated monitor selection and physical-pixel-to-Windows coordinate conversion.
+- [ ] Compare proposed 40 px-equivalent sensitivity against real input-unit measurements; verify reset and false-positive behavior.
 - [ ] Prototype **push-through** state machine, attempted movement delta capture and configurable sensitivity.
 - [ ] Define and test portal mapping (internal healthy regions and external screens) with a reversible route.
 - [ ] Prototype keyboard-only fail-open, hook release, process death and recovery.
@@ -30,6 +34,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 ## Phase 2 — window management and profile lifecycle
 
 - [ ] Main-area selection (suggestion and user override); auxiliary areas remain usable.
+- [ ] Live window-drag guard: stop full window bounds before forbidden overlap; test drag/cursor-portal interactions and size-limited fallback.
 - [ ] Best-effort spawn, restore, maximize, dialog rescue; never alter external monitor windows.
 - [ ] Visual and numeric rectangle configuration, safety preview and rollback.
 - [ ] Save last enabled profile with stable target identity; validate on restore.
@@ -39,6 +44,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 
 ## Phase 3 — stand-alone Safe Desktop Shell and first release
 
+- [ ] Implement **top, bottom, left, right** docking within main with responsive horizontal/vertical bar layout; default bottom and user-selectable visibility.
 - [ ] Dedicated taskbar entirely inside the main work area and responsive for narrow layouts.
 - [ ] Launcher/search, running/pinned apps, Explorer, Settings, clock/battery, audio/network access, power controls.
 - [ ] Select a reversible method for dealing with the native taskbar; document incompatible tray/notification features.
@@ -69,10 +75,10 @@ For every future PR: list changed requirement IDs, actual build/test commands, O
 
 ## Open product/engineering decisions (not yet approved)
 
-1. Push-through threshold, accumulation/decay/reset, diagonal/drag handling and mapping between healthy regions.
+1. Push-through **trial sensitivity** of 40 px-equivalent (final threshold, input units, accumulation/decay/reset), diagonals, and Windows-topology-preserving destination mapping.
 2. Main-area best-fit algorithm, too-small dimensions and auxiliary-area behavior.
 3. Visual zone editing UI, safe preview/undo and keyboard-only accessibility.
-4. Native taskbar hiding/coexistence and third-party tray/notification access.
+4. Native taskbar reversible hiding/coexistence (candidate Safe-first / both / native-first), effect on external monitors, and third-party tray/notification access.
 5. Which everyday shell operations work safely from the dedicated UI across Windows versions.
 6. Monitor identity, saved profiles across topology changes, and auto-start mechanics.
 7. Hotkey selection, .NET version/packaging and release validation conditions.

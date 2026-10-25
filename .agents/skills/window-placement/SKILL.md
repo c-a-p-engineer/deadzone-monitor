@@ -20,6 +20,13 @@ Read [the behavior contract](../../../docs/behavior-contract.md) for main versus
 5. Keep dedicated taskbar inside main area; it must not overlap the dead rectangle. Do not assume all native system panels can be moved.
 6. Preserve fallback keyboard/window operations for unsupported and protected windows.
 
+## Agreed drag and docking decisions
+
+- During a user drag, enforce the whole window's valid bounds **before** any dead-zone overlap; do **not** wait for mouse release to snap the window back. Do not move already valid auxiliary windows unnecessarily.
+- Move first, then reduce size if needed; on unshrinkable or oversized windows stop intervention rather than oscillating, and expose keyboard-accessible rescue.
+- Dedicated taskbar docks **top/bottom/left/right inside the user-selected main rectangle** (default bottom), with horizontal/vertical layout and user-visible show/hide.
+- Treat native taskbar hiding/coexistence as a separately tested reversible mechanism; never assume all monitors permit independent native-taskbar control.
+
 ## Verification
 
 - Dead rectangle on edge and in center, with main chosen from either side; auxiliary usable.
