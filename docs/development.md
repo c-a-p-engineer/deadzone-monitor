@@ -29,6 +29,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide **60-second confirm-or-rollback trial** for first-run activation; unconfirmed settings are not saved, timeout returns to the prior confirmed state or disabled first-run state.
 - [x] Decide **60-second trial for critical detailed-settings changes only** (dead zone, main area, monitor selection and pointer guarding/routing); cosmetic settings apply without trial.
 - [x] Decide **dedicated taskbar docking and show/hide changes** also require a 60-second trial; its cosmetic color/icon changes apply immediately.
+- [x] Decide **hidden dedicated bar keeps a compact reveal tab inside the healthy main area and a keyboard shortcut** for independent recovery; exact hotkey/tab geometry remain undecided.
 - [ ] Resolve unresolved parameters and feasibility questions identified in the behavior contract.
 
 ## Phase 1 — safe geometry and pointer proof
@@ -77,6 +78,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [ ] For **dedicated bar** docking and visibility changes, show an accessible 60-second confirm-or-rollback trial. Keep a keyboard recovery path even when testing hidden state; appearance-only edits do not require the countdown.
 - [ ] Validate cancel/expiry returns to confirmed docking/visibility, mixed critical/cosmetic edits use the critical gate, and a missing/moved monitor fails open rather than restoring invalid geometry.
 - [ ] Dedicated taskbar entirely inside the main work area and responsive for narrow layouts.
+- [ ] When dedicated bar is hidden, keep a visible healthy-area reveal tab; implement an independent keyboard shortcut. Confirm no invisible or lost entry point after main-area/topology changes, including during a 60-second visibility trial.
 - [ ] Launcher/search, running/pinned apps, Explorer, Settings, clock/battery, audio/network access, power controls.
 - [ ] Select a reversible method for dealing with the native taskbar; document incompatible tray/notification features.
 - [ ] Laptop-only end-to-end acceptance, including basic daily controls without any external display.
@@ -112,7 +114,7 @@ For every future PR: list changed requirement IDs, actual build/test commands, O
 4. Native taskbar reversible hiding/coexistence (candidate Safe-first / both / native-first), effect on external monitors, and third-party tray/notification access.
 5. Which everyday shell operations work safely from the dedicated UI across Windows versions.
 6. Monitor identity, saved profiles across topology changes, and auto-start mechanics.
-7. Hotkey selection, .NET version/packaging and release validation conditions.
+7. Exact keyboard shortcuts for emergency disable and hidden dedicated-bar reveal, reveal-tab size/placement, .NET version/packaging and release validation conditions.
 8. Rescue offer presentation (banner versus dedicated-taskbar button), duplicate/dismiss policy, arrow movement increments, safe-baseline positioning algorithm and fallback for refused moves, and applicability to uncooperative/system windows. **Detection + explicit start and focus-switch persistence** are decided.
 9. Rescue controller's **initial position**, placement persistence and behavior after all rescue sessions end, plus nuanced manual override versus subsequent automatic focus-follow. **One movable/collapsible shared floating panel, expanded on explicit rescue start and manually collapsed/expanded thereafter, with auto-follow and manual picker is agreed.**
 
