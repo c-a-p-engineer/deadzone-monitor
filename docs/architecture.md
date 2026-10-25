@@ -88,6 +88,8 @@ The main work area is the default placement and maximize rectangle. The dedicate
 
 The OS still knows the full physical display rectangle: modifying a normal window work area or adding an appbar does **not** automatically shrink all Windows shell surfaces or transform the panel into a virtual monitor. The product offers reachable equivalent controls where repositioning system panels is unreliable.
 
+**Hidden dedicated-bar access:** maintain a single compact reveal tab as an independent accessible UI surface whenever the SafeDesktopShell bar is hidden. Constrain its full bounds to the intact *main work rectangle* near the current bar docking edge, not to raw damaged physical-screen edges. A keyboard shortcut must reveal the bar even when the tab cannot be clicked. Revalidate the tab after topology, DPI, rotation and main-rectangle changes; if no usable placement exists, prefer a reachable fallback/fail-open rather than leaving the user with an invisible launcher. The shortcut combination and dimensions still require a separate decision. Treat transiently showing a hidden bar as a UI action, separate from changing its saved visibility setting (the latter still requires 60-second confirmation). The native Windows taskbar remains outside this mechanism.
+
 SafeDesktopShell should focus on:
 
 - App launch/search/pinned/running-app switching.
