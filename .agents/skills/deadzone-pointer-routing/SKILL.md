@@ -21,6 +21,10 @@ Read [the behavior contract](../../../docs/behavior-contract.md) for the agreed 
 6. Keep callbacks bounded and fast, avoid synthetic-event feedback, avoid spin/polling loops and avoid intercepting unrelated input.
 7. On ambiguous topology, input adapter failure, invalid settings, explicit hotkey or exit, release interception and return OS-native pointer behavior.
 
+## Emergency disable behavior
+
+Use a **global normal-desktop shortcut** to perform immediate emergency disable after one invocation, without a confirmation dialog or long hold. Release the pointer guard and transient cursor restrictions first; stop per-window boundary guards and held rescue movement, invalidate rescue sessions and discard any unconfirmed timed-trial draft. Do not re-enable the same session merely because focus changes or a scheduled confirmation timer fires. Keep shortcut processing idempotent on key repeat; avoid keystroke logging. The final chord and next-sign-in disabled-state preference are open decisions. Verify registration conflicts and all supported input states on real Windows hardware; no claim is made for secure/UAC desktops.
+
 ## Current interaction choices
 
 - User-adjustable push sensitivity, with a **provisional 40 px-equivalent** threshold for initial testing; exact input units and reset policy require evidence, not guesses.
