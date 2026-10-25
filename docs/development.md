@@ -26,6 +26,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide rescue directional tap steps and held continuous movement, with configurable step distance and speed.
 - [x] Decide safe-baseline positioning on explicit rescue End, with a reachable way to re-enter rescue.
 - [x] Decide **guided first-run setup wizard** (physical target -> damaged rectangle -> main work rectangle -> safety review), with **later detailed-settings editing**.
+- [x] Decide **60-second confirm-or-rollback trial** for first-run activation; unconfirmed settings are not saved, timeout returns to the prior confirmed state or disabled first-run state.
 - [ ] Resolve unresolved parameters and feasibility questions identified in the behavior contract.
 
 ## Phase 1 — safe geometry and pointer proof
@@ -59,7 +60,8 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [ ] Implement keyboard-accessible first-run **wizard**: monitor choice, scaled dead-zone preview and physical-pixel numeric input, intact main suggestion/override, emergency-escape demonstration and explicit enable.
 - [ ] Implement post-setup **detailed settings** that edit the same underlying validated profile and retain a recoverable previous configuration.
 - [ ] Test first-time wizard with broken-panel layout, optional external monitor, entirely keyboard-driven completion/cancellation and later detailed edits; do not enable guarding before explicit consent.
-- [ ] Resolve **trial duration, confirm action and automatic rollback** behavior before implementing the trial flow.
+- [ ] Implement an **initial 60-second uncommitted trial** with intact-region confirmation/countdown and keyboard access; on timeout or cancel restore last confirmed valid state, or disable if no prior state; commit only on explicit confirmation.
+- [ ] Test 59s confirmation versus 60s timeout race, user cancellation, no prior profile, invalid monitor/topology during test, sleep/resume, emergency hotkey and abrupt process termination; verify no unconfirmed startup persistence.
 
 - [ ] Save last enabled profile with stable target identity; validate on restore.
 - [ ] Hot-plug, disconnect/reconnect, DPI, orientation, resolution and sleep/resume safety handling.
@@ -101,7 +103,7 @@ For every future PR: list changed requirement IDs, actual build/test commands, O
 
 1. Push-through **trial sensitivity** of 40 px-equivalent (final threshold, input units, accumulation/decay/reset), diagonals, and Windows-topology-preserving destination mapping.
 2. Main-area best-fit algorithm, too-small dimensions and auxiliary-area behavior.
-3. Wizard on-screen placement/recovery for users with preexisting damaged displays; trial preview/undo **timeout and automatic rollback**. **Guided steps plus detailed-settings editing are agreed.**
+3. Wizard on-screen placement/recovery for users with preexisting damaged displays, plus **whether post-setup detailed edits should use the same 60-second trial**. **Guided steps, detailed-settings editing and first-run 60-second rollback are agreed.**
 4. Native taskbar reversible hiding/coexistence (candidate Safe-first / both / native-first), effect on external monitors, and third-party tray/notification access.
 5. Which everyday shell operations work safely from the dedicated UI across Windows versions.
 6. Monitor identity, saved profiles across topology changes, and auto-start mechanics.
