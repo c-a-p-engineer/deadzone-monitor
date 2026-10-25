@@ -12,7 +12,7 @@ description: Use when discovering monitors, identifying the damaged built-in pan
 
 1. Query current monitor bounds and work areas through Windows APIs; record DPI awareness and relevant scaling conversion at the boundary.
 2. Identify the built-in monitor from stable available identifiers or user selection. Do not assume primary/index/leftmost/zero-origin.
-3. Convert normalized local coordinates to virtual desktop rectangles only for the current topology snapshot. For cursor push-through, expose each existing monitor's verified bounds and identity so the routing engine can find the **first intact destination in the selected forward direction**, preserving same Y for horizontal and same X for vertical crossings when possible. Do not infer missing monitors across virtual-desktop gaps.
+3. Convert normalized local coordinates to virtual desktop rectangles only for the current topology snapshot. Expose each monitor's verified identity/bounds and forward-route validity to the routing engine. **After one external target is uniquely selected**, let routing preserve the orthogonal coordinate where valid, or clamp Y on horizontal and X on vertical crossing to the nearest intact point **on that target only**. Never infer a different monitor across virtual-desktop gaps.
 4. Validate target existence, unique identity, valid bounds and zone area. If ambiguous, return `unresolved` and disable intervention.
 5. Recompute after attach/detach, resolution, rotation, scaling and resume events; make updates atomic from the routing engine's perspective.
 
@@ -23,7 +23,7 @@ For initial onboarding, provide an explicitly selected physical target monitor, 
 ## Verification
 
 - Unit tests: negative origins; mixed resolutions; noninteger scaling; rotation; adjacent and gapped displays; swapped primary; unplugged/replaced target.
-- Integration tests: external-left, external-right, dual external; dock hot-plug/resume. Verify forward healthy-area selection, preserved orthogonal coordinate, and safely unresolved nonaligned/gapped layouts.
+- Integration tests: external-left, external-right, above/below and dual external; dock hot-plug/resume. Verify uniquely identified forward monitor, unchanged coordinate when possible, nearest orthogonal-coordinate correction on offset target, and blocked jumps for ambiguous or invalid gapped layouts.
 - Confirm external monitor coordinates are never classified as part of the target dead zone.
 
 ## Stop conditions
