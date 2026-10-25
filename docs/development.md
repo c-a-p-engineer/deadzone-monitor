@@ -19,6 +19,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide **initial-version oversized-window four-way rescue mode** with per-window scoped exception to ordinary full-containment guard.
 - [x] Decide **auto-detect then offer** rescue in healthy area: explicit user action starts it (no silent activation).
 - [x] Decide **rescue remains active across application switches** and ordinary minimize/restore; explicit user End or target window Close normally terminates it, safety fail-open can override.
+- [x] Decide **concurrent independent per-window rescue sessions**; multiple oversized windows keep separate offsets and ending one does not end another.
 - [ ] Resolve unresolved parameters and feasibility questions identified in the behavior contract.
 
 ## Phase 1 — safe geometry and pointer proof
@@ -39,9 +40,10 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [ ] Main-area selection (suggestion and user override); auxiliary areas remain usable.
 - [ ] Live window-drag guard: stop full window bounds before forbidden overlap; test drag/cursor-portal interactions.
 - [ ] **Detect unfit supported windows**, show a keyboard-accessible **Start rescue** action inside healthy/main space, and require explicit user activation; suppress false offers for fit-capable windows, avoid focus theft.
-- [ ] **Four-direction rescue mode** for an oversized/minimum-size affected window, scoped to the selected window; implement keyboard-operable controls, reset/exit, avoid ordinary guard tug-of-war and verify no input trap.
+- [ ] **Four-direction rescue mode** with a per-window session registry; support independent offsets, reset/exit and keyboard-operable controls; prevent ordinary guard tug-of-war without disabling protection for unrelated windows.
 - [ ] Test 1600px-minimum-size window in 1200px healthy rectangle, both horizontal and vertical overflow, app refusal to move, external monitor unchanged, and topology changes during rescue.
 - [ ] Test active rescue with browser/other app foreground switching, target minimize/restore, repeat switching, user End, target Close, and emergency disable. Verify shifted position retention, independent other-window safety and clearing of stale window IDs.
+- [ ] **Concurrent rescue validation:** start A and B in independent sessions, give distinct offsets, switch focus repeatedly, end/close one without changing the other; reject stale/reused HWND and wrong-target control actions, then test global fail-open cleanup.
 - [ ] Best-effort spawn, restore, maximize, dialog rescue; never alter external monitor windows.
 - [ ] Visual and numeric rectangle configuration, safety preview and rollback.
 - [ ] Save last enabled profile with stable target identity; validate on restore.
@@ -90,7 +92,7 @@ For every future PR: list changed requirement IDs, actual build/test commands, O
 6. Monitor identity, saved profiles across topology changes, and auto-start mechanics.
 7. Hotkey selection, .NET version/packaging and release validation conditions.
 8. Rescue offer presentation (banner versus dedicated-taskbar button), duplicate/dismiss policy, arrow movement increments, exit/restore with no fully safe placement, and applicability to uncooperative/system windows. **Detection + explicit start and focus-switch persistence** are decided.
-9. Whether two or more oversize windows may retain independent concurrent rescue sessions or rescue is limited to one at a time.
+9. Rescue control-panel target selection and layout with concurrent sessions: one adaptive panel, target picker, or independent panels. **Concurrent independent sessions themselves are agreed.**
 
 ## Rollback
 
