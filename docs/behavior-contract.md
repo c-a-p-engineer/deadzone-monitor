@@ -1,52 +1,112 @@
-# Behavior contract (planned, not implemented)
+# Behavior contract — agreed requirements, not yet implemented
 
-This document owns user-observable requirements, safety invariants, and acceptance criteria. It does not claim a working binary exists.
+**Agreement checkpoint:** 2026-10-25. This is the authoritative product behavior contract. An agreement here is not an implementation or a verified Windows capability.
 
-## Primary use case
+## Product goal and delivery priority
 
-A Windows laptop's **left half of its built-in screen** is unusable. The user needs the **right half** for work, must not accidentally send the pointer into the damaged area, and must retain full pointer access to multiple external monitors.
+**Mode A — first priority:** after Windows sign-in, restore the last enabled configuration so that a laptop with a damaged display can be used for ordinary day-to-day Windows operations **using only intact regions**, even without an external monitor. External monitors, when present, remain accessible.
 
-The initial profile is a selectable monitor and a normalized disabled rectangle `x=0..0.5, y=0..1` within that monitor. Geometry is configurable; do not hard-code 1920×1080, monitor index, DPI, or topology.
+**Mode B — future exploration:** extend the experience to the Windows sign-in/password or PIN screen itself. This is a separate, lower-priority research goal; ordinary user-space software does **not** control the secure Windows logon desktop. Do not imply Mode B is feasible with Mode A's architecture.
 
-## Behavioral requirements
+The initial user scenario is a broken left portion of a built-in laptop panel, but the product must not assume a left-half-only problem. For example, a 1920×1080 display with the left 620 physical pixels damaged is just one valid configuration.
 
-| ID | Requirement | Acceptance |
+## Agreed product decisions
+
+| Decision | Status | Meaning |
 | --- | --- | --- |
-| DZ-01 | Target only the explicitly selected monitor and disabled rectangle. | External-monitor input is unchanged; a different internal panel can be selected without code changes. |
-| DZ-02 | While active on a normal user desktop, prevent a pointer entering the selected forbidden area during supported pointer movement. | Entry attempts at every boundary redirect/stop at an allowed position; cursor never becomes trapped at an unreachable location. |
-| DZ-03 | Preserve navigation from healthy laptop area to *each* connected external monitor and back. | Physical paths requiring a crossing of the forbidden strip still have an intentional, reversible transition path. |
-| DZ-04 | Keep windows on the laptop display usable in the surviving region. | Ordinary new, restored, and maximized windows can be reached and interacted with without moving important controls into the forbidden area, subject to documented OS/app limitations. |
-| DZ-05 | Provide always-accessible disable/recovery. | An accessible keyboard shortcut disables interception and a process exit restores normal pointer behavior without requiring pointer access to the damaged region. |
-| DZ-06 | React safely to display arrival/removal, resolution changes, scaling, rotation, and sleep/resume. | Recalculate correctly, or temporarily disable restriction with a visible warning if the target monitor cannot be identified reliably. |
-| DZ-07 | Avoid unnecessary privilege and data collection. | No administrator requirement for ordinary use, no input-content logging, remote connection, or telemetry by default. |
-| DZ-08 | Make activation deliberate and recoverable. | First launch starts disabled; user enables it after seeing the target display/zone and escape shortcut. Persisted autostart must not preempt this safety baseline. |
+| Arbitrary rectangular dead zone | **Agreed, initial version** | A user chooses any X/Y/width/height rectangle on a selected display; not limited to screen halves or edges. |
+| Rectangle selection UI | **Agreed direction** | Visual preview/drag selection and editable physical-pixel coordinates; exact controls remain design work. |
+| Number of zones | **Initial design boundary** | One rectangular dead zone per selected monitor profile initially; multiple regions are a future extension, not yet agreed for initial delivery. |
+| Workspaces | **Agreed** | Exactly one user-selected **main work area**, with remaining intact areas available as **auxiliary areas**. |
+| Pointer crossing | **Agreed: push-through (B)** | A pointer at a damaged-region boundary stops first; continued intentional movement in the same direction causes a jump to a valid area. Not an immediate edge-touch jump. |
+| External screens | **Agreed** | Reach external monitors and return even when a dead zone lies along the physical virtual-desktop path. |
+| Windows | **Agreed** | Ordinary windows appear, can be rescued, and maximize within the main work area, subject to Windows/app limitations. |
+| Taskbar | **Agreed** | Prefer a dedicated taskbar fitting completely inside the main intact work area; native taskbar fidelity is secondary. |
+| Everyday shell interaction | **Agreed** | A dedicated launch/control UI may replace day-to-day access to native Start/notifications/controls. It need not clone the whole Windows shell. |
+| Standalone laptop | **Agreed** | Common daily actions must be reachable without an external monitor. |
+| Auto start/restore | **Agreed** | After initial opt-in, subsequent Windows sign-ins should auto-start and restore the prior enabled profile. |
+| Safe escape | **Required safety invariant** | A keyboard-only emergency disable and fail-open behavior prevent being trapped. |
+| Pre-sign-in UI | **Deferred Mode B** | Track as future investigation, never block Mode A on it. |
 
-## Interaction semantics
+## Terms and geometry
 
-- The **forbidden region** is scoped to the target monitor's coordinates, not a global x-value.
-- Treat monitor rectangles in Windows virtual-desktop coordinates; external monitors may have negative x/y coordinates, gaps, different DPI, or different resolutions.
-- When a direct pointer trajectory toward an external display traverses the forbidden region, route the transition to a usable landing position on the intended display. Avoid bounce loops and accidental clicks during correction.
-- If geometry is ambiguous or crossing cannot be resolved reliably, **fail open** or offer a clear disabled state; don't trap the pointer in a rectangle.
-- The cursor restriction and window management are independently switchable where practical. Window management is best-effort; never imply all third-party windows can be controlled.
-- Full-screen games, secure UAC desktop, sign-in, firmware/boot and protected or higher-integrity app surfaces are outside the guaranteed behavior boundary.
+- **Target display:** the explicitly selected physical monitor. No restrictions apply to a different monitor unless separately and deliberately configured later.
+- **Dead zone:** a positive-area axis-aligned rectangle in target-display-local **physical pixels**, specified by `x, y, width, height`; do not treat physical pixels as the same as DPI-scaled UI units. Validate bounds against the current orientation/resolution.
+- **Allowed area:** the selected display bounds minus the dead zone, plus entirely accessible external displays.
+- **Main work area:** one user-chosen axis-aligned rectangle wholly within an intact part of the target display. The UI may offer a best-fit suggestion; the user can choose another valid rectangle. It hosts maximize and the dedicated taskbar.
+- **Auxiliary areas:** any other intact display portions outside the main work area. They remain pointer-reachable and can host manually placed windows. These are **not** independent Windows monitors and need not be separate, nonoverlapping 'virtual monitor' objects.
+- **Push-through:** an explicit continued inward movement at an excluded boundary. Sensitivity/threshold should be adjustable; a numeric default, direction-change/reset rules, jump coordinate mapping, and measurement of movement delta are **not yet fixed**.
 
-## Safety invariants
+## Behavioral requirements and acceptance
 
-1. User can always disable the feature through a keyboard-only recovery mechanism on supported normal desktops.
-2. Losing the process or disabling the feature must not leave a persistent OS cursor clip, injected driver, altered display mode, or blocked input.
-3. No unintended restriction may apply to the external monitors.
-4. An unknown/untrusted topology does not activate an assumed dead zone.
-5. No keystroke content or pointer trajectory history is stored or transmitted.
+| ID | Required behavior | Verifiable acceptance |
+| --- | --- | --- |
+| DZ-01 | Select a physical target display and define a rectangular dead zone anywhere on it. | Coordinates are editable in physical px, visual preview matches them, and a center rectangle as well as an edge rectangle are accepted. |
+| DZ-02 | Select one intact main work rectangle, leaving all other healthy pixels usable as auxiliary space. | No main rectangle overlaps the forbidden area; selection can be changed without editing code; auxiliary areas remain pointer-reachable. |
+| DZ-03 | Prevent supported normal-desktop pointer movement into the dead zone while guarding is enabled. | Boundary and high-speed entry tests do not leave the pointer in the forbidden region under the supported input paths. |
+| DZ-04 | Use **push-through** crossing between reachable intact areas, not immediate jump-on-contact. | At a boundary, first stop; continued movement deliberately transfers to a valid target. No reachable target means stop (no spurious teleport). Reverse travel works. |
+| DZ-05 | Preserve normal access to every connected external monitor. | Left/right external screens, two external screens, negative coordinates, and dead-zone crossings allow deliberate outward and return movement. |
+| DZ-06 | Prefer main-area placement for ordinary new/restore/maximize windows, and rescue inaccessible windows. | Ordinary supported windows remain operable on the intact screen; auxiliary placement by user is preserved where possible; external-display windows are not repositioned. |
+| DZ-07 | Fit a dedicated taskbar/launcher into the **main** intact rectangle. | It never spans the excluded region and can launch/switch applications and provide access to essential system operations. |
+| DZ-08 | Support everyday laptop-only usage through dedicated UI, even if Windows-native panels cannot be repositioned. | With all external screens unplugged, user can start/switch apps, open files/settings, adjust volume/network, see clock/battery, and reach power controls from intact space, where OS capabilities permit. |
+| DZ-09 | Persist target identity, zone, main rectangle, crossing preferences, and UI settings locally. | Sign-out/reboot and the next sign-in restore the last **explicitly enabled and validated** profile without requiring repeated manual setup. |
+| DZ-10 | Auto-launch **after** Windows sign-in. First-run activation requires user review. | First setup shows safe preview/hotkey; subsequent successful sign-ins restore an enabled validated profile. Do not activate on unknown monitors or invalid data. |
+| DZ-11 | Provide reliable emergency disable and fail-open behavior. | Keyboard-only disable works without tray/mouse; stop/crash/topology mismatch removes interception and avoids persistent OS cursor clipping or a stranded cursor. |
+| DZ-12 | Remain safe across topology and resolution/DPI/orientation changes. | Recalculate when safe or suspend restriction with an accessible warning; do not apply an old rectangle to a misidentified monitor. |
+| DZ-13 | Operate privately and without exceptional system permissions. | No admin/driver/service required for Mode A's intended normal-desktop path; no telemetry, input-content recording, screenshot capture, or network requirement by default. |
 
-## Acceptance matrix (required before first release)
+## Dedicated taskbar and shell access — feature boundary
 
-- Single laptop display: both attempted dead-zone entries and intentional disable.
-- Laptop + external monitor to left; laptop + external monitor to right.
-- Laptop + two external monitors, including an arrangement that would ordinarily require crossing the left-half strip.
-- Target monitor is not primary; negative virtual coordinates and mixed DPI.
-- Hot-unplug/replug; resolution/scaling/orientation changes; sleep/resume.
-- Rapid cursor movement, dragging, edges/corners, alt-tab, overlays, and keyboard recovery.
-- Minimized/restored/maximized ordinary windows and app exceptions.
-- Forced process termination or hook failure followed by restored normal pointer motion.
+Initial completed Mode A should cover **functional access**, not a pixel-perfect reimplementation of Windows Explorer:
 
-Use synthetic geometry tests for deterministic behavior; **physically test on Windows** for the actual pointer/window controls. Keep observed and unverified outcomes separate.
+- Application launcher/search and pinned/recent or running app switching.
+- Open File Explorer and Windows Settings in reachable positions.
+- Clock/date and relevant laptop indicators, including battery.
+- Audio/network controls using supported Windows mechanisms or safe shortcuts to native settings.
+- Shutdown/restart/sleep or other suitable power controls with confirmation where needed.
+- A compact layout if the selected main work area is narrow.
+
+**Not promised by this agreement:** full third-party system tray mirroring, unrestricted access to every vendor panel, perfect native Start/notification center positioning, or exact replication of all Windows notification actions. Investigate access alternatives and document any remaining coverage gaps before calling Mode A complete.
+
+Native taskbar hiding/repositioning must not require corrupting shell state; an imperfect but reversible fallback is preferable to a fragile Explorer hack.
+
+## Lifecycle and safety
+
+1. **First run:** show target/rectangle/main-area preview; make emergency keyboard disable discoverable and testable; require explicit first enable.
+2. **Later sign-ins:** run as the same user and automatically restore the last enabled, validated configuration after desktop initialization.
+3. **Monitor missing/ambiguous, invalid zone, failure:** suspend restrictions and show accessible failure status. Retain the saved profile for later recovery, but do not apply it to a guessed device.
+4. **User disable, exit, forced termination:** normal OS pointer movement returns; no persistent global clip or driver modification survives.
+5. **Re-enable:** require valid geometry and an operational keyboard escape path before enabling interception.
+
+A reliable emergency hotkey combination, conflicting shortcuts, safe reactivation strategy and interaction with unexpected shutdown require explicit prototype tests.
+
+## Out-of-scope for initial Mode A
+
+- Controlling the Windows **sign-in/password/PIN** display (Mode B research).
+- Secure UAC desktops, firmware/boot screens and protected or elevated windows.
+- Perfect handling of exclusive-fullscreen games/video and all system overlays.
+- Emulating real OS multi-monitor subdivision; applying a custom global monitor layout driver.
+- Multiple dead-zone rectangles per profile (future option).
+- A full Explorer shell replacement or guaranteed fidelity for every system tray icon.
+
+## Release acceptance scenarios
+
+1. Laptop alone, dead rectangle on **left edge**; numeric width other than 50%.
+2. Laptop alone, dead rectangle **in the middle** with main plus auxiliary regions.
+3. Laptop + an external monitor on the left, on the right, and laptop + two external screens; confirm push-through jump and reverse.
+4. First approach to dead region stops; continued push triggers transfer; moving away, corners, different input speeds and no-target boundaries behave safely.
+5. Main/auxiliary selection, ordinary create/restore/maximize/dialog paths; dedicated taskbar stays inside main rectangle.
+6. Run everyday actions **without any external screen** using dedicated controls.
+7. Fresh setup, saved profile across sign-out/restart, invalid profile, monitor removal/reconnect, resolution/scale/rotation changes.
+8. Hotkey-only disable and killed-process restoration; no persistent capture/clipping or input lockout.
+
+Deterministic geometry tests alone are insufficient: pointer hooks, Windows shell integration, lifecycle and user safety **require real Windows desktop/manual tests**. The implementation/release status must remain distinct from these agreed outcomes.
+
+## Open decisions (not silently treated as agreed)
+
+- Push-through distance/units, movement accumulation/reset policy, edge corners, repeat jumps and destination mapping.
+- Precise main-area automatic suggestion and restrictions for very small surviving areas.
+- Whether a center hole's tiny surviving strips are suitable auxiliary areas or should be optional.
+- Native taskbar coexistence/hiding strategy and third-party notification/tray fallback.
+- Settings UI details, chosen hotkey, startup implementation, profile matching and monitor identity fidelity.
+- Which difficult system dialogs/overlays require alternate access rather than relocation.

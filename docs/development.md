@@ -1,58 +1,82 @@
 # Development plan and verification ledger
 
-**Current state (2026-10-25):** repository initialized with specification, agent instructions, local skills and MIT license. **Application implementation has not begun.** No build, automated Windows test, manually validated behavior, or release is claimed.
+**Checkpoint (2026-10-25):** initial repository bootstrap plus a new agreed-requirements pass. **No application implementation, GitHub Actions workflow, Windows integration result or release exists yet.** This plan distinguishes signed-off product behavior from unverified implementation techniques.
 
-## Phase 0 — contract and repository bootstrap
+The owner of requirements is [behavior-contract.md](behavior-contract.md); do not use this task plan as a conflicting specification.
 
-- [x] Public repository initialized with authoritative behavior/safety contract.
-- [x] Project-specific agent instructions and task-focused skills defined.
-- [x] MIT license, security and contributor guidance added.
-- [ ] Validate planned input mechanism against a real Windows host.
+## Phase 0 — requirements and repository basis
 
-## Phase 1 — safe pointer prototype
+- [x] Public repository, contributor/agent rules, local task skills and MIT license.
+- [x] Decide **Mode A first**, Mode B secure sign-in as future exploratory track.
+- [x] Decide **arbitrary rectangle** with physical px coordinates from the first version.
+- [x] Decide **one main intact work area** plus remaining auxiliary areas.
+- [x] Decide **push-through cursor jump** rather than immediate jump.
+- [x] Decide standalone usability and dedicated taskbar/launcher over native shell fidelity.
+- [x] Decide last-settings restoration after user sign-in and emergency disable.
+- [ ] Resolve unresolved parameters and feasibility questions identified in the behavior contract.
 
-- [ ] Create a small C#/.NET Windows executable and separate pure routing library.
-- [ ] Enumerate monitors and require explicit selection of target.
-- [ ] Implement disabled-by-default cursor routing; preserve external monitor access.
-- [ ] Implement and exercise keyboard-only disable, crash/failure behavior and safe shutdown.
-- [ ] Add deterministic synthetic geometry/crossing tests.
-- [ ] Test on a physical laptop and at least one external display.
+## Phase 1 — safe geometry and pointer proof
 
-**Gate:** No background startup or release before escape, fail-open, and external crossings work on the actual machine.
+- [ ] Pure geometry model for arbitrary rectangle, main/auxiliary regions and external screens.
+- [ ] Validated monitor selection and physical-pixel-to-Windows coordinate conversion.
+- [ ] Prototype **push-through** state machine, attempted movement delta capture and configurable sensitivity.
+- [ ] Define and test portal mapping (internal healthy regions and external screens) with a reversible route.
+- [ ] Prototype keyboard-only fail-open, hook release, process death and recovery.
+- [ ] Test edge/center dead zones, different sizes, corners and no-destination boundaries.
+- [ ] Verify on a real Windows laptop with/without an external monitor.
 
-## Phase 2 — windows and topology
+**Gate:** usable pointer and emergency keyboard recovery must be confirmed on hardware before background automatic enable or packaging as working software.
 
-- [ ] Implement best-effort safe-zone window placement and maximize behavior.
-- [ ] Handle negative coordinates, mixed DPI, target identification and hot-plug.
-- [ ] Test at least two external displays and unusual ordering.
-- [ ] Document known exceptions; don't claim unsupported app/window coverage.
+## Phase 2 — window management and profile lifecycle
 
-## Phase 3 — usability and packaging
+- [ ] Main-area selection (suggestion and user override); auxiliary areas remain usable.
+- [ ] Best-effort spawn, restore, maximize, dialog rescue; never alter external monitor windows.
+- [ ] Visual and numeric rectangle configuration, safety preview and rollback.
+- [ ] Save last enabled profile with stable target identity; validate on restore.
+- [ ] Hot-plug, disconnect/reconnect, DPI, orientation, resolution and sleep/resume safety handling.
+- [ ] Windows sign-in **post-login** automatic startup and restoration, after escape gate passes.
+- [ ] Test invalid/ambiguous profile restores, intentional disable and emergency recovery.
 
-- [ ] Add tray controls and optional per-user startup only after recovery tests.
-- [ ] Pin SDK, dependencies, build commands, repeatable packaging.
-- [ ] Implement Windows build/test workflow **after maintainer approval of new GitHub Actions usage**.
-- [ ] Evaluate unsigned binary trust / SmartScreen behavior, artifact retention and release notes.
-- [ ] Distribute a versioned release only after all relevant acceptance tests pass.
+## Phase 3 — stand-alone Safe Desktop Shell and first release
 
-## Minimal validation evidence for each future PR
+- [ ] Dedicated taskbar entirely inside the main work area and responsive for narrow layouts.
+- [ ] Launcher/search, running/pinned apps, Explorer, Settings, clock/battery, audio/network access, power controls.
+- [ ] Select a reversible method for dealing with the native taskbar; document incompatible tray/notification features.
+- [ ] Laptop-only end-to-end acceptance, including basic daily controls without any external display.
+- [ ] Pin Windows/.NET SDK and build/package instructions; create CI workflow **only after maintainer approval**.
+- [ ] Sign-in startup validation, crash/fail-open regression and actual Windows desktop manual testing.
+- [ ] Document limitations, unsigned binary/SmartScreen and release evidence; publish only after separate authorization.
 
-- Changed requirement IDs (from [behavior-contract.md](behavior-contract.md)).
-- Automated test command(s), machine/OS, outcomes, and test gaps.
-- Manual steps for mouse, keyboard recovery, and external monitors if behavior is affected.
-- Expected fallback and process-exit behavior.
-- Explicit label: **implemented**, **tested**, **unverified**, or **deferred**.
+## Phase B — deferred research, not part of Mode A release gate
 
-## Current open design decisions
+- [ ] Assess options for usable **Windows sign-in/password/PIN** interaction when the screen is damaged.
+- [ ] Compare legitimate OS accessibility or physical-display workarounds before considering system credential-provider or other invasive integrations.
+- [ ] Record Windows secure-desktop limitations, permission/reliability risks and separate explicit approvals.
+- [ ] Do not claim Mode B works or modify system authentication behavior during Mode A delivery.
 
-1. Actual Windows cursor interception method and how it interacts with synthetic moves.
-2. Unambiguous portal behavior for external screens located behind disabled regions.
-3. Reliable built-in display identity across docks/resume; behavior when ambiguous.
-4. Best-effort maximize strategy and compatibility with common apps.
-5. Selected .NET SDK and per-user distribution format.
+## Acceptance evidence to collect
 
-Resolve with prototypes and evidence; avoid turning speculative details into guaranteed behavior.
+| Scenario | Automated geometry evidence | Real Windows confirmation |
+| --- | --- | --- |
+| Arbitrary center/edge rectangle and main/aux choice | Required | Required |
+| Push-through stops first, then intentional jump | Required | Required |
+| Reverse transfer, external-left/right, two external monitors | Required | Required |
+| Standalone application/window/taskbar/system controls | Supporting | Required |
+| Saved settings after next sign-in; invalid target fail-open | Supporting | Required |
+| Emergency hotkey, hook failure, forced process exit | Supporting | Required |
 
-## Rollback policy
+For every future PR: list changed requirement IDs, actual build/test commands, OS/runner, results, gaps and fallback instructions. `passed CI` does not equal `verified on Windows hardware`.
 
-Keep cursor interception behind an opt-in toggle. Before changing startup behavior or installation, prove disabled mode and process exit restore normal pointer access. For a failing published release, disable startup and revert to the last verified binary.
+## Open product/engineering decisions (not yet approved)
+
+1. Push-through threshold, accumulation/decay/reset, diagonal/drag handling and mapping between healthy regions.
+2. Main-area best-fit algorithm, too-small dimensions and auxiliary-area behavior.
+3. Visual zone editing UI, safe preview/undo and keyboard-only accessibility.
+4. Native taskbar hiding/coexistence and third-party tray/notification access.
+5. Which everyday shell operations work safely from the dedicated UI across Windows versions.
+6. Monitor identity, saved profiles across topology changes, and auto-start mechanics.
+7. Hotkey selection, .NET version/packaging and release validation conditions.
+
+## Rollback
+
+Keep pointer enforcement behind a reversible toggle. Prove disabled mode and process-exit recovery before enabling autostart. A bad release must be stoppable from the keyboard and from the usual Windows application management tools without requiring access to the damaged region.

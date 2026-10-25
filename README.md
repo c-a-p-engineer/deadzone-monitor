@@ -1,48 +1,45 @@
 # DeadZone Monitor
 
-A lightweight Windows utility **planned** to keep pointer and application windows out of damaged areas of a display while preserving access to external monitors.
+A Windows utility **in design** to make a computer with a partly damaged screen usable by excluding bad pixels from pointer movement, window placement and everyday controls.
 
-> **Status: specification / repository bootstrap only.** No executable, tested cursor hook, or Windows release is available yet. The behavior below is the implementation target, not a claim of current functionality.
+> **Status: requirements agreed / not yet implemented.** There is no working executable, tested Windows mouse hook, automated build or public release at this time.
 
-## Why
+## Product target: Mode A first
 
-When the left half of a laptop panel is damaged, users should be able to work in the healthy right half without losing access to other monitors. Simple window tiling does not prevent pointer travel into the broken region; globally clipping the cursor also blocks legitimate multi-monitor movement.
+- Configure an **arbitrary rectangular dead zone** on a selected display, with physical-pixel X/Y/width/height and visual preview. Not limited to halves or edges.
+- Select one intact **main work area** for window maximization and a compact dedicated taskbar, while keeping other intact pixels available as auxiliary regions.
+- **Push-through cursor jump:** stop at the forbidden boundary first, then jump into another reachable healthy area after intentional further movement. Preserve access to external monitors and back.
+- Keep common windows usable on the remaining visible area (best effort given Windows and app limitations).
+- Provide a dedicated launcher/taskbar and essential system controls so a laptop can be used **without any external monitor**, even where native Windows shell panels cannot be relocated.
+- On subsequent **Windows sign-ins**, automatically start and restore the previous valid enabled settings. First run requires explicit setup; an accessible keyboard-only emergency disable is mandatory.
+- Work offline as a normal user with no telemetry or driver requirement.
 
-## Goals
+**Future Mode B:** investigate use of the Windows pre-sign-in password/PIN screen on a damaged display. Ordinary desktop applications cannot promise secure logon desktop relocation.
 
-- Configure a disabled area on a **selected** internal display (initial target: left 50%).
-- Keep the pointer out of that area during ordinary desktop interaction.
-- Preserve mouse access to **all connected external displays**, even when a forbidden strip lies between them in the Windows virtual desktop arrangement.
-- Keep ordinary application windows usable on the surviving portion of the internal display (best effort, including maximize handling).
-- Offer an immediate keyboard-controlled **disable / fail-open** path; never leave a user trapped by the tool.
-- Run locally with no required account, telemetry, or network connection.
+## Current scope and limitations
 
-## Non-goals and limitations
+Initially one rectangular excluded area per selected monitor profile; the data model may later support multiple damaged regions. The main area is not a new Windows monitor. Protected UAC/login screens, every fullscreen game, native Start/notification positioning, and all third-party tray icons are not guaranteed.
 
-- Repairing a physically damaged panel.
-- Changing Windows' physical monitor boundaries or exposing half a panel as a new monitor.
-- Controlling pointer movement on the sign-in screen, secure UAC desktop, pre-boot environment, or every exclusive-fullscreen game.
-- Guaranteeing perfect placement for privileged, protected, or uncooperative windows.
+The **push-through threshold, portal destinations, Windows taskbar compatibility and exact system-control implementation** remain to be resolved by prototypes and user testing. Product acceptance is documented, but functionality is not claimed as shipped.
 
-## Planned technology
+## Read the specs
 
-C# / .NET for Windows with narrowly scoped Win32 interoperability. Exact SDK version and packaging are to be pinned when an implementation exists.
+- [Behavior contract and agreed decisions](docs/behavior-contract.md)
+- [Proposed architecture and safety model](docs/architecture.md)
+- [Phased development and open decisions](docs/development.md)
+- [Agent/contributor guidance](AGENTS.md)
+- [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
 
-## Project documents
+Task-focused local skills live in [`.agents/skills/`](.agents/skills/). They are not copies of any private repository.
 
-- [Agent and contributor rules](AGENTS.md)
-- [Behavior and acceptance criteria](docs/behavior-contract.md)
-- [Architecture and safety decisions](docs/architecture.md)
-- [Milestones and verification plan](docs/development.md)
-- [Contributing](CONTRIBUTING.md)
-- [Security](SECURITY.md)
+## Planned implementation
 
-Task-focused agent skills are in [`.agents/skills/`](.agents/skills/). These are project-specific adaptations, **not** a copy of the private Tsuzuri core repository.
+C# / .NET on Windows with minimal Win32 interoperability. Specific SDK and packaging are to be selected after initial prototype evidence.
 
 ## License
 
-[MIT](LICENSE) — you may use, copy, modify, distribute, and sell the software, subject to retaining the license notice. **Provided as-is, without warranty or liability to the extent stated by the license.** See the full license text for the governing terms.
+[MIT License](LICENSE). Use, modify, redistribute and sell subject to the stated license conditions. Supplied **as-is, without warranties**, subject to the license text.
 
-## Safety note
+## Safety
 
-Until the escape path and multi-monitor behavior have been verified on a physical Windows machine, **do not use a development build as the only input method on an important system.** A USB mouse/keyboard and a fallback method to terminate the process are recommended for initial tests.
+Before testing an input-control prototype, verify keyboard-only disable, fail-open behavior and normal input after process termination on a real Windows machine. Compile success does not prove input safety.
