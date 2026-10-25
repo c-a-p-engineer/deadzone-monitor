@@ -1,0 +1,30 @@
+# .NET and Visual Studio
+bin/
+obj/
+.vs/
+.vscode/
+*.user
+*.suo
+*.cache
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# Build / packaging output
+artifacts/
+publish/
+*.nupkg
+*.snupkg
+
+# Per-machine and OS files
+.DS_Store
+Thumbs.db
+*.log
+
+# Signing credentials / local secrets
+*.pfx
+*.p12
+.env
+.env.*
+!.env.example
