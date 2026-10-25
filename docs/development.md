@@ -11,6 +11,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide **arbitrary rectangle** with physical px coordinates from the first version.
 - [x] Decide **one main intact work area** plus remaining auxiliary areas.
 - [x] Decide **push-through cursor jump** rather than immediate jump.
+- [x] Decide **reset accumulated push-through distance when the pointer retreats from a blocked edge into healthy space**; renewed contact begins at zero (no carryover).
 - [x] Decide standalone usability and dedicated taskbar/launcher over native shell fidelity.
 - [x] Decide last-settings restoration after user sign-in and emergency disable.
 - [x] Decide **four-edge docking** for the dedicated taskbar (bottom by default) and user-oriented native coexistence/visibility goals.
@@ -41,6 +42,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [ ] Pure geometry model for arbitrary rectangle, main/auxiliary regions and external screens.
 - [ ] Validated monitor selection and physical-pixel-to-Windows coordinate conversion.
 - [ ] Compare proposed 40 px-equivalent sensitivity against real input-unit measurements; verify reset and false-positive behavior.
+- [ ] Test partial blocked-edge push followed by retreat into allowed space and a new contact: require full fresh push before crossing. Check tangential sliding (not departure), sensor jitter, corners, diagonals, and left/right external-monitor routes without unintended jumps.
 - [ ] Prototype **push-through** state machine, attempted movement delta capture and configurable sensitivity.
 - [ ] Define and test portal mapping (internal healthy regions and external screens) with a reversible route.
 - [ ] Prototype keyboard-only fail-open, hook release, process death and recovery.
@@ -116,7 +118,7 @@ For every future PR: list changed requirement IDs, actual build/test commands, O
 
 ## Open product/engineering decisions (not yet approved)
 
-1. Push-through **trial sensitivity** of 40 px-equivalent (final threshold, input units, accumulation/decay/reset), diagonals, and Windows-topology-preserving destination mapping.
+1. Push-through **trial sensitivity** of 40 px-equivalent (final threshold and input units), tangential/corner/diagonal interpretation, pointer jitter tolerance, and Windows-topology-preserving destination mapping. **Accumulated inward motion resets when actually retreating from a blocked edge into healthy space; decided.**
 2. Main-area best-fit algorithm, too-small dimensions and auxiliary-area behavior.
 3. Wizard on-screen placement/recovery for users with preexisting damaged displays, plus **keyboard recovery and on-screen confirmation when the dedicated taskbar is hidden during its agreed 60-second trial**. **Guided steps, detailed-settings editing and 60-second rollback for first-run and critical post-setup edits are agreed.**
 4. **Native taskbar hide/reposition is deferred beyond v0.1**; v0.1 keeps it untouched. Confirm coexistence and document unavailable tray/notification functions. Optional advanced native integration needs a separate feasibility investigation.
