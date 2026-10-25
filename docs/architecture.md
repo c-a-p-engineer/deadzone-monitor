@@ -96,7 +96,9 @@ SafeDesktopShell should focus on:
 - File Explorer and Settings access from intact space.
 - Audio, networking and battery/clock information plus power controls.
 - Narrow-main-area responsive layout.
-- Reversible native-taskbar coexistence policy.
+- **v0.1 non-interference** with the native Windows taskbar (native shell unchanged); dedicated bar coexists alongside it.
+
+**Initial release boundary:** do not hide, move, restart, replace or configure Windows Explorer's native taskbar; no `SHAppBarMessage`-based interference with native taskbar state or Explorer kill/restart for bar coexistence. The dedicated SafeDesktopShell overlay only manages its **own** surfaces inside verified intact pixels. Native Windows taskbar controls may be inaccessible over damaged parts; unsupported tray/notification functions remain documented limitations. Any native bar modification requires a separate future feasibility review and approval.
 
 Third-party notification-area icons, native Start, protected overlays and all possible dialogs are **not** assumed trivially clonable. Test and document missing functions before claiming standalone usefulness.
 
