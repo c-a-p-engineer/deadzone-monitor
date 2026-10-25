@@ -36,6 +36,10 @@ Read [the behavior contract](../../../docs/behavior-contract.md) for main versus
 5. Close **only the affected session** on explicit End or target-window Close; preserve other sessions. Safety failures (lost identity, unsafe topology, emergency disable), privilege changes, refusal to move or repeated failure may trigger safe suspend/cleanup for affected sessions or all sessions as required by safety. Never loop reposition attempts.
 6. On exit, restore a feasible and usable placement or surface a keyboard-accessible fallback if full containment remains impossible; clear the exception state.
 
+## Direction control behavior
+
+For a rescued window, a short direction press requests one configurable step. A sustained press requests continuous movement at a configurable rate, stopping when released. Keep the intended rescue target identifiable, preserve its separate saved position and verify both pointer and keyboard usability. Calibrate actual numeric defaults in Windows tests.
+
 ## Verification
 
 - Dead rectangle on edge and in center, with main chosen from either side; auxiliary usable.
