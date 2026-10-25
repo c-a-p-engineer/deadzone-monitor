@@ -10,6 +10,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide **Mode A first**, Mode B secure sign-in as future exploratory track.
 - [x] Decide **arbitrary rectangle** with physical px coordinates from the first version.
 - [x] Decide **one main intact work area** plus remaining auxiliary areas.
+- [x] Decide **automatic suggestion of a large, usable main rectangle**, scoring sufficient width/height for taskbar and essential controls as well as area; user may explicitly override with another validated intact rectangle.
 - [x] Decide **push-through cursor jump** rather than immediate jump.
 - [x] Decide **reset accumulated push-through distance when the pointer retreats from a blocked edge into healthy space**; renewed contact begins at zero (no carryover).
 - [x] Decide **diagonal push-through uses only the inward normal component** of attempted movement at the contacted edge, ignoring tangential movement and diagonal total distance.
@@ -64,7 +65,8 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 
 ## Phase 2 — window management and profile lifecycle
 
-- [ ] Main-area selection (suggestion and user override); auxiliary areas remain usable.
+- [ ] Main-area selection: enumerate wholly intact rectangles, recommend a **large operationally usable** candidate using width/height needs of taskbar and key controls in addition to area, and allow user override; preserve remaining auxiliary areas. Keep suggestions in draft until safety-critical 60-second confirmation.
+- [ ] Test edge/center dead zones; long thin max-area strip versus smaller usable rectangle; portrait/narrow layout; candidate ties, manual valid/invalid overrides, and no suitable rectangle. Warn visibly and keep keyboard fail-open if all candidates are unusable.
 - [ ] Live window-drag guard: stop full window bounds before forbidden overlap; test drag/cursor-portal interactions.
 - [ ] **Detect unfit supported windows**, show a keyboard-accessible **Start rescue** action inside healthy/main space, and require explicit user activation; suppress false offers for fit-capable windows, avoid focus theft.
 - [ ] **Four-direction rescue mode** with a per-window session registry; support independent offsets, reset/exit and keyboard-operable controls; prevent ordinary guard tug-of-war without disabling protection for unrelated windows.
@@ -127,7 +129,7 @@ For every future PR: list changed requirement IDs, actual build/test commands, O
 ## Open product/engineering decisions (not yet approved)
 
 1. Push-through **trial sensitivity** of 40 px-equivalent (final threshold and input units), contact-order/jitter tolerance, safe landing margins and topology-gap/route validation. **Normal-only accumulation, retreat reset, corner priority, forward landing and nearest orthogonal-coordinate correction for one verified offset target are decided.**
-2. Main-area best-fit algorithm, too-small dimensions and auxiliary-area behavior.
+2. **Large-but-usable main-area suggestion and manual override are decided**; precise scoring, minimum width/height for essential controls, tie-breaks, and safe behavior when every surviving rectangle is too small remain to decide/test.
 3. Wizard on-screen placement/recovery for users with preexisting damaged displays, plus **keyboard recovery and on-screen confirmation when the dedicated taskbar is hidden during its agreed 60-second trial**. **Guided steps, detailed-settings editing and 60-second rollback for first-run and critical post-setup edits are agreed.**
 4. **Native taskbar hide/reposition is deferred beyond v0.1**; v0.1 keeps it untouched. Confirm coexistence and document unavailable tray/notification functions. Optional advanced native integration needs a separate feasibility investigation.
 5. Which everyday shell operations work safely from the dedicated UI across Windows versions.
