@@ -13,7 +13,7 @@ Read [the behavior contract](../../../docs/behavior-contract.md) for main versus
 
 ## Procedure
 
-1. Confirm the main rectangle is wholly intact. Offer a reasonable candidate but preserve explicit user selection.
+1. Confirm the main rectangle is wholly intact. In initial setup, **suggest a large yet operable candidate** by balancing intact area with adequate width/height for the dedicated taskbar, essential settings and confirmation controls; do not score only by area. Explain the suggestion and permit an explicit override to another valid fully intact rectangle. If no operable candidate exists, preserve keyboard recovery and avoid claiming normal UI is usable. Concrete minimum dimensions require Windows UI validation.
 2. Place supported new/restored/maximized normal windows relative to main; do not assume `MONITORINFO.rcWork` can represent a hole in a physical display.
 3. Keep auxiliary intact pixels available for manually moved windows. Avoid forcibly snapping every auxiliary window back into main.
 4. Rescue inaccessible title bars and dialogs without focus theft, endless repositioning or changes to windows on unrelated external screens.
