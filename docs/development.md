@@ -30,6 +30,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide **60-second trial for critical detailed-settings changes only** (dead zone, main area, monitor selection and pointer guarding/routing); cosmetic settings apply without trial.
 - [x] Decide **dedicated taskbar docking and show/hide changes** also require a 60-second trial; its cosmetic color/icon changes apply immediately.
 - [x] Decide **hidden dedicated bar keeps a compact reveal tab inside the healthy main area and a keyboard shortcut** for independent recovery; exact hotkey/tab geometry remain undecided.
+- [x] Decide **v0.1 native Windows taskbar stays unchanged**: run dedicated bar alongside it; defer native hide/reposition features to later investigation.
 - [ ] Resolve unresolved parameters and feasibility questions identified in the behavior contract.
 
 ## Phase 1 — safe geometry and pointer proof
@@ -80,7 +81,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [ ] Dedicated taskbar entirely inside the main work area and responsive for narrow layouts.
 - [ ] When dedicated bar is hidden, keep a visible healthy-area reveal tab; implement an independent keyboard shortcut. Confirm no invisible or lost entry point after main-area/topology changes, including during a 60-second visibility trial.
 - [ ] Launcher/search, running/pinned apps, Explorer, Settings, clock/battery, audio/network access, power controls.
-- [ ] Select a reversible method for dealing with the native taskbar; document incompatible tray/notification features.
+- [ ] **Verify non-interference:** do not programmatically hide/reposition/restart or reconfigure native taskbar/Explorer; test coexistence with dedicated bar on laptop and external monitors, and document incompatible tray/notification features.
 - [ ] Laptop-only end-to-end acceptance, including basic daily controls without any external display.
 - [ ] Pin Windows/.NET SDK and build/package instructions; create CI workflow **only after maintainer approval**.
 - [ ] Sign-in startup validation, crash/fail-open regression and actual Windows desktop manual testing.
@@ -111,7 +112,7 @@ For every future PR: list changed requirement IDs, actual build/test commands, O
 1. Push-through **trial sensitivity** of 40 px-equivalent (final threshold, input units, accumulation/decay/reset), diagonals, and Windows-topology-preserving destination mapping.
 2. Main-area best-fit algorithm, too-small dimensions and auxiliary-area behavior.
 3. Wizard on-screen placement/recovery for users with preexisting damaged displays, plus **keyboard recovery and on-screen confirmation when the dedicated taskbar is hidden during its agreed 60-second trial**. **Guided steps, detailed-settings editing and 60-second rollback for first-run and critical post-setup edits are agreed.**
-4. Native taskbar reversible hiding/coexistence (candidate Safe-first / both / native-first), effect on external monitors, and third-party tray/notification access.
+4. **Native taskbar hide/reposition is deferred beyond v0.1**; v0.1 keeps it untouched. Confirm coexistence and document unavailable tray/notification functions. Optional advanced native integration needs a separate feasibility investigation.
 5. Which everyday shell operations work safely from the dedicated UI across Windows versions.
 6. Monitor identity, saved profiles across topology changes, and auto-start mechanics.
 7. Exact keyboard shortcuts for emergency disable and hidden dedicated-bar reveal, reveal-tab size/placement, .NET version/packaging and release validation conditions.
