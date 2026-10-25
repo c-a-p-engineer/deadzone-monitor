@@ -33,6 +33,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide **v0.1 native Windows taskbar stays unchanged**: run dedicated bar alongside it; defer native hide/reposition features to later investigation.
 - [x] Decide **immediate, confirmation-free global emergency keyboard shortcut** (single activation, not long hold); release guarding, stop rescue movement and cancel pending trials.
 - [x] Decide **default emergency chord plus user customization**, requiring successful registration/keyboard-only test before replacing a working binding; unsuccessful changes revert.
+- [x] Decide **emergency disable stays active across app restarts, Windows sign-outs and reboots** until deliberate user re-enable; auto-login restoration must respect the persisted disabled latch.
 - [ ] Resolve unresolved parameters and feasibility questions identified in the behavior contract.
 
 ## Phase 1 — safe geometry and pointer proof
@@ -45,6 +46,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [ ] Prototype keyboard-only fail-open, hook release, process death and recovery.
 - [ ] Prototype a normal-desktop **global emergency shortcut** with no confirmation/hold: immediate pointer hook release, window guard shutdown, cancellation of ongoing rescue holds and trial drafts, no same-session automatic re-enable. Test conflicts, repeated keydown and no accessible taskbar/normal mouse.
 - [ ] Prototype **safe emergency shortcut reassignment**: documented default, reject reserved/colliding combinations, maintain prior operational binding during candidate test, confirm new chord using keyboard only, and roll back after cancel/failed registration/interrupted test. Validate laptop layouts and no disabled escape route.
+- [ ] Implement/test durable per-user `emergencyDisabled` latch and fail-open on unknown/corrupt marker, interrupted write, restart during active trial or interrupted manual re-enable. Never automatically restore hooks while the latch is set.
 - [ ] Test edge/center dead zones, different sizes, corners and no-destination boundaries.
 - [ ] Verify on a real Windows laptop with/without an external monitor.
 
@@ -75,6 +77,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [ ] Save last enabled profile with stable target identity; validate on restore.
 - [ ] Hot-plug, disconnect/reconnect, DPI, orientation, resolution and sleep/resume safety handling.
 - [ ] Windows sign-in **post-login** automatic startup and restoration, after escape gate passes.
+- [ ] Test reboot/sign-out/app-relaunch after emergency stop: startup UI may appear, but cursor guard, rescue offsets and window restrictions remain off. Deliberate enable revalidates monitor and emergency key, and only a successfully confirmed activation clears the disabled latch.
 - [ ] Test invalid/ambiguous profile restores, intentional disable and emergency recovery.
 
 ## Phase 3 — stand-alone Safe Desktop Shell and first release
@@ -119,7 +122,7 @@ For every future PR: list changed requirement IDs, actual build/test commands, O
 4. **Native taskbar hide/reposition is deferred beyond v0.1**; v0.1 keeps it untouched. Confirm coexistence and document unavailable tray/notification functions. Optional advanced native integration needs a separate feasibility investigation.
 5. Which everyday shell operations work safely from the dedicated UI across Windows versions.
 6. Monitor identity, saved profiles across topology changes, and auto-start mechanics.
-7. Exact **default** keyboard chord for the agreed immediate emergency disable, robust replacement/verification implementation, hidden dedicated-bar reveal shortcut, whether emergency disabled-state persists across later sign-ins, reveal-tab size/placement, .NET version/packaging and release validation conditions. **Default plus user-changeable shortcut and safe rollback are agreed.**
+7. Exact **default** keyboard chord for the agreed immediate emergency disable, robust replacement/verification implementation, hidden dedicated-bar reveal shortcut, durable disabled-state write/recovery strategy, reveal-tab size/placement, .NET version/packaging and release validation conditions. **Default plus user-changeable shortcut, safe rollback, and emergency-disabled persistence until explicit re-enable are agreed.**
 8. Rescue offer presentation (banner versus dedicated-taskbar button), duplicate/dismiss policy, arrow movement increments, safe-baseline positioning algorithm and fallback for refused moves, and applicability to uncooperative/system windows. **Detection + explicit start and focus-switch persistence** are decided.
 9. Rescue controller's **initial position**, placement persistence and behavior after all rescue sessions end, plus nuanced manual override versus subsequent automatic focus-follow. **One movable/collapsible shared floating panel, expanded on explicit rescue start and manually collapsed/expanded thereafter, with auto-follow and manual picker is agreed.**
 
