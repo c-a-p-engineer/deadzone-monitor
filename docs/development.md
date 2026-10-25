@@ -20,6 +20,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide **auto-detect then offer** rescue in healthy area: explicit user action starts it (no silent activation).
 - [x] Decide **rescue remains active across application switches** and ordinary minimize/restore; explicit user End or target window Close normally terminates it, safety fail-open can override.
 - [x] Decide **concurrent independent per-window rescue sessions**; multiple oversized windows keep separate offsets and ending one does not end another.
+- [x] Decide **one shared rescue panel** with automatic target-follow for focused rescue-enabled apps plus a manual target picker.
 - [ ] Resolve unresolved parameters and feasibility questions identified in the behavior contract.
 
 ## Phase 1 — safe geometry and pointer proof
@@ -44,6 +45,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [ ] Test 1600px-minimum-size window in 1200px healthy rectangle, both horizontal and vertical overflow, app refusal to move, external monitor unchanged, and topology changes during rescue.
 - [ ] Test active rescue with browser/other app foreground switching, target minimize/restore, repeat switching, user End, target Close, and emergency disable. Verify shifted position retention, independent other-window safety and clearing of stale window IDs.
 - [ ] **Concurrent rescue validation:** start A and B in independent sessions, give distinct offsets, switch focus repeatedly, end/close one without changing the other; reject stale/reused HWND and wrong-target control actions, then test global fail-open cleanup.
+- [ ] **Single shared rescue controller:** select target on rescue-enabled foreground changes; support manual picker of valid sessions, accessible target label, keyboard operations, no accidental retarget on panel/nonrescued focus, safe close/destroy handling, no duplicate panels.
 - [ ] Best-effort spawn, restore, maximize, dialog rescue; never alter external monitor windows.
 - [ ] Visual and numeric rectangle configuration, safety preview and rollback.
 - [ ] Save last enabled profile with stable target identity; validate on restore.
@@ -92,7 +94,7 @@ For every future PR: list changed requirement IDs, actual build/test commands, O
 6. Monitor identity, saved profiles across topology changes, and auto-start mechanics.
 7. Hotkey selection, .NET version/packaging and release validation conditions.
 8. Rescue offer presentation (banner versus dedicated-taskbar button), duplicate/dismiss policy, arrow movement increments, exit/restore with no fully safe placement, and applicability to uncooperative/system windows. **Detection + explicit start and focus-switch persistence** are decided.
-9. Rescue control-panel target selection and layout with concurrent sessions: one adaptive panel, target picker, or independent panels. **Concurrent independent sessions themselves are agreed.**
+9. Rescue controller's **physical placement and visibility** (fixed position versus movable/collapsible) and nuanced manual override versus subsequent automatic focus-follow. **One shared panel with auto-follow and manual picker is agreed.**
 
 ## Rollback
 
