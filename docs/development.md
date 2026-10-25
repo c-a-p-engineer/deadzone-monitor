@@ -23,6 +23,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide **one shared rescue panel** with automatic target-follow for focused rescue-enabled apps plus a manual target picker.
 - [x] Decide **freely movable, expanded/collapsed floating rescue controller** within intact main area; compact reachable handle and keyboard-only reopen.
 - [x] Decide **expand on user-initiated rescue start; thereafter manual-only collapse/expand**, never triggered by idle timeout or application focus change.
+- [x] Decide rescue directional tap steps and held continuous movement, with configurable step distance and speed.
 - [ ] Resolve unresolved parameters and feasibility questions identified in the behavior contract.
 
 ## Phase 1 — safe geometry and pointer proof
@@ -50,6 +51,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [ ] **Single shared rescue controller:** select target on rescue-enabled foreground changes; support manual picker of valid sessions, accessible target label, keyboard operations, no accidental retarget on panel/nonrescued focus, safe close/destroy handling, no duplicate panels.
 - [ ] **Movable/collapsible floating-panel geometry:** free drag within intact main, expanded/collapsed controls, reachable handle and keyboard reopen, clamping after resolution/topology/main-area changes, no dead-zone overlap or inaccessible off-screen panel.
 - [ ] **Manual visibility policy regression:** newly started rescue opens shared panel expanded, manual collapse remains collapsed across idle/focus/minimize events; manual reopen preserves per-window sessions and offsets; keyboard-only reopen works.
+- [ ] Implement configurable single-tap step and press-and-hold directional rescue movement; validate settings and release behavior.
 - [ ] Best-effort spawn, restore, maximize, dialog rescue; never alter external monitor windows.
 - [ ] Visual and numeric rectangle configuration, safety preview and rollback.
 - [ ] Save last enabled profile with stable target identity; validate on restore.
