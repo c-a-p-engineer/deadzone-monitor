@@ -15,6 +15,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide **diagonal push-through uses only the inward normal component** of attempted movement at the contacted edge, ignoring tangential movement and diagonal total distance.
 - [x] Decide **corner contact edge priority**: lock first-contacted edge; simultaneous contact chooses larger inward-normal component; ambiguous tie never jumps.
 - [x] Decide **natural forward push-through landing**: choose first verified intact region along locked travel direction, preserve Y for horizontal crossing or X for vertical crossing when feasible; no destination/ambiguity means no teleport.
+- [x] Decide **offset external-monitor landing fallback**: after uniquely validating the forward target, correct the orthogonal X/Y to its nearest intact point if outside range; never guess between monitors or across unsafe gaps.
 - [x] Decide standalone usability and dedicated taskbar/launcher over native shell fidelity.
 - [x] Decide last-settings restoration after user sign-in and emergency disable.
 - [x] Decide **four-edge docking** for the dedicated taskbar (bottom by default) and user-oriented native coexistence/visibility goals.
@@ -50,7 +51,8 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [ ] Test all four rectangle corners: sequential first-contact lock, truly simultaneous unequal inward components, exact/ambiguous tie with no jump, no mid-gesture edge oscillation, and fresh selection after retreat. Test laptop-only plus external monitors.
 - [ ] Prototype **push-through** state machine, attempted movement delta capture and configurable sensitivity.
 - [ ] Define and test portal mapping (internal healthy regions and external screens) with a reversible route.
-- [ ] Test forward-direction destination selection across internal center holes, edge damage and left/right/above/below external monitors: first valid intact destination, unchanged orthogonal coordinate where possible, reverse movement and anti-bounce behavior. For gaps/nonaligned screens or ambiguous candidate positions, require no speculative jump until a documented safe fallback is validated.
+- [ ] Test forward-direction destination selection across internal center holes, edge damage and left/right/above/below external monitors: first valid intact destination, unchanged orthogonal coordinate where possible, reverse movement and anti-bounce behavior.
+- [ ] Test nonaligned external monitors with a **unique** verified forward target: clamp out-of-range Y (horizontal travel) or X (vertical travel) to nearest safe coordinate *on that selected target*. Test exact coordinate preservation when in-range, mixed DPI, negative origins, virtual-desktop gaps, no landing, competing targets and round-trip safety; no ambiguous/gap jump.
 - [ ] Prototype keyboard-only fail-open, hook release, process death and recovery.
 - [ ] Prototype a normal-desktop **global emergency shortcut** with no confirmation/hold: immediate pointer hook release, window guard shutdown, cancellation of ongoing rescue holds and trial drafts, no same-session automatic re-enable. Test conflicts, repeated keydown and no accessible taskbar/normal mouse.
 - [ ] Prototype **safe emergency shortcut reassignment**: documented default, reject reserved/colliding combinations, maintain prior operational binding during candidate test, confirm new chord using keyboard only, and roll back after cancel/failed registration/interrupted test. Validate laptop layouts and no disabled escape route.
@@ -124,7 +126,7 @@ For every future PR: list changed requirement IDs, actual build/test commands, O
 
 ## Open product/engineering decisions (not yet approved)
 
-1. Push-through **trial sensitivity** of 40 px-equivalent (final threshold and input units), contact-order/jitter tolerance and **safe landing-coordinate fallback for nonaligned or gapped displays**. **Normal-only accumulation, retreat reset, first-contact corner priority and forward-direction landing with orthogonal-coordinate preservation are decided.**
+1. Push-through **trial sensitivity** of 40 px-equivalent (final threshold and input units), contact-order/jitter tolerance, safe landing margins and topology-gap/route validation. **Normal-only accumulation, retreat reset, corner priority, forward landing and nearest orthogonal-coordinate correction for one verified offset target are decided.**
 2. Main-area best-fit algorithm, too-small dimensions and auxiliary-area behavior.
 3. Wizard on-screen placement/recovery for users with preexisting damaged displays, plus **keyboard recovery and on-screen confirmation when the dedicated taskbar is hidden during its agreed 60-second trial**. **Guided steps, detailed-settings editing and 60-second rollback for first-run and critical post-setup edits are agreed.**
 4. **Native taskbar hide/reposition is deferred beyond v0.1**; v0.1 keeps it untouched. Confirm coexistence and document unavailable tray/notification functions. Optional advanced native integration needs a separate feasibility investigation.
