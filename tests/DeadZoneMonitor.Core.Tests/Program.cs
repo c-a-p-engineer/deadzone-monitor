@@ -37,6 +37,16 @@ var tests = new (string Name, Action Run)[]
         IsFalse(MainAreaAdvisor.Recommend(layout, 700, 200).HasValue);
     }),
 
+    ("wizard can suggest a main rectangle before profile activation", () =>
+    {
+        var suggested = MainAreaAdvisor.Recommend(
+            new PixelRect(0, 0, 1000, 700), new PixelRect(200, 40, 500, 660),
+            minimumWidth: 250, minimumHeight: 150);
+        Eq<PixelRect?>(new PixelRect(700, 0, 300, 700), suggested);
+        Throws<ArgumentException>(() => MainAreaAdvisor.Candidates(
+            new PixelRect(0, 0, 1000, 700), new PixelRect(999, 0, 2, 100)));
+    }),
+
     ("no suitable main area fails without guessing", () =>
     {
         var layout = Layout(new(0, 0, 999, 699), new(999, 0, 1, 700));
