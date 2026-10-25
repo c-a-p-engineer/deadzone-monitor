@@ -27,7 +27,7 @@ Use a **global normal-desktop shortcut** to perform immediate emergency disable 
 
 ## Current interaction choices
 
-- User-adjustable push sensitivity, with a **provisional 40 px-equivalent** threshold for initial testing; exact input units and reset policy require evidence, not guesses.
+- User-adjustable push sensitivity, with a **provisional 40 px-equivalent** threshold for initial testing; precise units and jitter tolerance require evidence. Reset when retreating from the blocked edge is agreed.
 - Derive portal candidates from the **existing Windows monitor geometry**. Do not reconfigure screen resolution/position to implement cursor crossing.
 - When a window is being dragged, coordinate with WindowGuard: preserve the *whole window* in intact space, even if the cursor can intentionally push through. Do not auto-transfer a held window into forbidden pixels.
 
