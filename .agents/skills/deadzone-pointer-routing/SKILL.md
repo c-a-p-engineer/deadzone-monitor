@@ -17,7 +17,7 @@ Read [the behavior contract](../../../docs/behavior-contract.md) for the agreed 
 2. Separate a pure geometry/portal state machine from Win32 event acquisition; never equate clamped cursor position with repeated attempted movement.
 3. On first entry attempt, **stop** at the allowed boundary. While blocked at one rectangle edge, accumulate only the **positive inward perpendicular component** of attempted input movement; exclude tangential distance and full diagonal length. Emit a jump only after the configured threshold, with a validated destination. At corners, lock the first contacted edge. For simultaneous first contact, select the edge with larger positive inward normal motion; an equal or uncertain tie must not transfer. Maintain edge lock until retreat or safe crossing.
 4. On retreat into healthy space, reset accumulated blocked-edge push to zero; later contact starts a fresh gesture. Motion tangential to a still-contacted edge is not retreat. Keep threshold, jitter handling, diagonal/corner behavior and destination mapping configurable/testable; precise numeric values are open.
-5. Resolve a reachable region behind the excluded rectangle (internal healthy area or external monitor); preserve a workable reverse path. If there is no destination, stop without teleporting.
+5. After the deliberate push threshold, resolve the **first verifiable healthy landing in the selected forward direction** (internal target display or existing external monitor). Preserve **Y** on horizontal crossing and **X** on vertical crossing wherever valid. Respect Windows' current monitor topology without changing it. If the line has no safe landing or the destination is ambiguous, stay blocked rather than guessing; prevent immediate bounce and preserve a workable reverse path.
 6. Keep callbacks bounded and fast, avoid synthetic-event feedback, avoid spin/polling loops and avoid intercepting unrelated input.
 7. On ambiguous topology, input adapter failure, invalid settings, explicit hotkey or exit, release interception and return OS-native pointer behavior.
 
@@ -38,7 +38,7 @@ Use a **global normal-desktop shortcut** to perform immediate emergency disable 
 - Test oblique and purely tangential swipes at all four rectangle edges. Only inward normal travel counts; a tangential-only swipe never triggers transfer. Check this with mouse and touchpad inputs.
 - Test all four corners: first-touch lock, simultaneous unequal inward normal movement, ambiguous ties staying blocked, and reset/edge reselection only after retreat or safe crossing. Include multi-monitor routes.
 - Reverse traversal; partial push, retreat and return to a boundary with zero carried progress; tangential sliding, oscillation, diagonal/corners, high speed and drag.
-- External monitor to left/right, two external monitors, and laptop-alone operation.
+- External monitor to left/right, two external monitors, and laptop-alone operation. Validate first intact landing along locked direction, horizontal same-Y and vertical same-X placement, nonaligned/gapped geometry no-guess behavior, return travel and anti-bounce.
 - No accidental click, bounce loop, inability to disable, unbounded CPU or persistent cursor clipping.
 - Actual Windows manual testing of the attempted movement signal and forced-process-exit behavior.
 
