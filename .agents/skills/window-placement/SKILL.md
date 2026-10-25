@@ -27,7 +27,7 @@ Read [the behavior contract](../../../docs/behavior-contract.md) for main versus
 - Dedicated taskbar docks **top/bottom/left/right inside the user-selected main rectangle** (default bottom), with horizontal/vertical layout and user-visible show/hide.
 - In the **hidden dedicated bar** state, retain a compact clickable reveal tab **wholly inside the main intact rectangle** (near the chosen docking edge) and a keyboard shortcut to show the bar. Reposition/revalidate the tab whenever display geometry changes; never rely on the damaged screen edge. A temporary reveal is distinct from a persisted visibility preference change, which uses the 60-second trial. Exact shortcut and tab geometry remain undecided.
 - A change to the **dedicated bar's docking side or visible/hidden state** must run the agreed **60-second user-confirmed trial**, otherwise revert to the last confirmed topology-valid configuration or safely disable guarding when recovery cannot be validated. Its theme/icon changes apply without trial. Preserve keyboard access to trial confirmation and emergency disable even while the dedicated bar is hidden.
-- Treat native taskbar hiding/coexistence as a separately tested reversible mechanism; never assume all monitors permit independent native-taskbar control.
+- **v0.1: leave native Windows taskbar/Explorer unchanged**. The SafeDesktopShell bar operates alongside it; no native hide, reposition, restart or system configuration changes. Document native panels/tray functions that remain inaccessible due to damaged pixels; revisit native integration only as separate later research.
 
 ## Oversized rescue procedure
 
