@@ -55,19 +55,22 @@ A single global rectangular clamp cannot express a usable right-hand portion plu
 Candidate state machine (interaction details require agreement and Windows tests):
 
 ```text
-NORMAL_WINDOW --[full containment impossible + user enters]--> RESCUE(window-id)
+NORMAL_WINDOW --[detected cannot fit]--> RESCUE_OFFERED(window-id)
+RESCUE_OFFERED(window-id) --[explicit user starts]--> RESCUE(window-id)
+RESCUE_OFFERED(window-id) --[window becomes fit, closes, or topology changes]--> NORMAL_WINDOW
 RESCUE(window-id) --[direction input]--> RESCUE(window-id, shifted-position)
 RESCUE(window-id) --[reset/exit]--> NORMAL_WINDOW or SAFE_FALLBACK
 RESCUE(window-id) --[window closed, target lost, topology invalid]--> SAFE_FALLBACK
 ```
 
-- Mark exactly one target window as the exception; pause its normal full-containment clamp while still guarding the pointer and all other ordinary windows.
+- Detection is not activation: only offer rescue for a supported window that remains unfit after normal safe-placement efforts. Place a keyboard-reachable **Start rescue** control wholly inside healthy main space. Do not steal focus or immediately move the window merely because the offer appeared.
+- Mark exactly one target window as the exception **only after explicit user activation**; pause its normal full-containment clamp while still guarding the pointer and all other ordinary windows.
 - Reposition the window using bounded Win32 APIs (for example `SetWindowPos`) and safe visible controls. This is **window movement**, not content scrolling, scaling, clipping or a true virtual-screen pan. Hidden parts remain outside the healthy viewing rectangle until moved back.
 - Persist/recover the selected window's prior position **in memory only as needed**; do not persist sensitive titles/content or reapply stale handles across restart.
 - Keep the control panel fully inside healthy pixels and keyboard-operable. Avoid moving it along with the rescued window.
 - Never fight an app enforcing its own position/minimum dimensions; stop repeated attempts and offer manual/keyboard fallback.
 - Underlying Windows constraints include application-defined minimum tracking sizes (`WM_GETMINMAXINFO`) and the limits of cross-process window repositioning; **success requires real Windows integration testing**.
-- Separate **agreed functionality** (rescue and 4-way shifting) from **undecided UX** (automatic prompt/manual launch, step sizes, control layout, reset behavior).
+- Separate **agreed functionality** (automatic detection + reachable user-activated start, rescue and 4-way shifting) from **undecided UX** (offer/banner style, repeated-offer policy, step sizes, control layout, reset behavior).
 
 ## Main area, windows and desktop shell
 
