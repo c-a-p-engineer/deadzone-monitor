@@ -23,9 +23,17 @@ Read [the behavior contract](../../../docs/behavior-contract.md) for main versus
 ## Agreed drag and docking decisions
 
 - During a user drag, enforce the whole window's valid bounds **before** any dead-zone overlap; do **not** wait for mouse release to snap the window back. Do not move already valid auxiliary windows unnecessarily.
-- Move first, then reduce size if needed; on unshrinkable or oversized windows stop intervention rather than oscillating, and expose keyboard-accessible rescue.
+- Move first, then reduce size if needed; on unshrinkable or oversized windows enter a **separate per-window rescue mode** rather than oscillating. Enable four-direction repositioning with an always-reachable keyboard-operable control panel, and prevent the ordinary clamp from immediately undoing an intentional rescue shift.
 - Dedicated taskbar docks **top/bottom/left/right inside the user-selected main rectangle** (default bottom), with horizontal/vertical layout and user-visible show/hide.
 - Treat native taskbar hiding/coexistence as a separately tested reversible mechanism; never assume all monitors permit independent native-taskbar control.
+
+## Oversized rescue procedure
+
+1. Confirm the supported window cannot fit within a useful intact rectangle despite permitted move/resize. Do not activate rescue for an unrelated external-window or an app that already fits.
+2. Capture the original placement safely and mark **only that window** as the current rescue exception. Do not stop pointer guarding or protections for other windows.
+3. Offer controls to move the window **up/down/left/right** and a reset/exit action entirely inside intact space; movement reveals previously hidden content sequentially.
+4. Stop if the target closes, changes privilege, refuses moves, changes display or repeated attempts fail. Do not turn attempted rescue into a tight reposition loop.
+5. On exit, restore a feasible and usable placement or surface a keyboard-accessible fallback if full containment remains impossible; clear the exception state.
 
 ## Verification
 

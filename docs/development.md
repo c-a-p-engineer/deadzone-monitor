@@ -16,6 +16,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide **four-edge docking** for the dedicated taskbar (bottom by default) and user-oriented native coexistence/visibility goals.
 - [x] Decide **move first, resize only as needed** for normal windows and **boundary-stop while actively dragging**, not snap-back on release.
 - [x] Preserve Windows' monitor sizes/relative layout; allow user-adjustable push-through sensitivity with **40 px-equivalent as a tentative starting value**.
+- [x] Decide **initial-version oversized-window four-way rescue mode** with per-window scoped exception to ordinary full-containment guard.
 - [ ] Resolve unresolved parameters and feasibility questions identified in the behavior contract.
 
 ## Phase 1 — safe geometry and pointer proof
@@ -34,7 +35,9 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 ## Phase 2 — window management and profile lifecycle
 
 - [ ] Main-area selection (suggestion and user override); auxiliary areas remain usable.
-- [ ] Live window-drag guard: stop full window bounds before forbidden overlap; test drag/cursor-portal interactions and size-limited fallback.
+- [ ] Live window-drag guard: stop full window bounds before forbidden overlap; test drag/cursor-portal interactions.
+- [ ] **Four-direction rescue mode** for an oversized/minimum-size affected window, scoped to the selected window; implement keyboard-operable controls, reset/exit, avoid ordinary guard tug-of-war and verify no input trap.
+- [ ] Test 1600px-minimum-size window in 1200px healthy rectangle, both horizontal and vertical overflow, app refusal to move, external monitor unchanged, and topology changes during rescue.
 - [ ] Best-effort spawn, restore, maximize, dialog rescue; never alter external monitor windows.
 - [ ] Visual and numeric rectangle configuration, safety preview and rollback.
 - [ ] Save last enabled profile with stable target identity; validate on restore.
@@ -82,6 +85,7 @@ For every future PR: list changed requirement IDs, actual build/test commands, O
 5. Which everyday shell operations work safely from the dedicated UI across Windows versions.
 6. Monitor identity, saved profiles across topology changes, and auto-start mechanics.
 7. Hotkey selection, .NET version/packaging and release validation conditions.
+8. Rescue mode activation UX (automatic prompt vs manual), arrow movement increments, exit/restore with no fully safe placement, and applicability to uncooperative/system windows.
 
 ## Rollback
 

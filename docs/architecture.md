@@ -14,7 +14,7 @@ This document owns **technical proposals**, not user-visible requirements. The a
 2. **ZoneModel** — validate one arbitrary target-local physical-pixel rectangle and user-selected main intact rectangle, expose full allowed regions including auxiliary areas. Support a future list of rectangles without exposing it as an implemented feature.
 3. **PointerRouter** — pure geometry and **push-through state machine** consuming allowed topology, prior pointer position, attempted movement/direction and movement accumulation. Return stop, normal movement, mapped jump, or fail-open.
 4. **Win32InputAdapter** — bounded event handling and safe cursor reposition/hook lifecycle; needs real Windows validation and must not interfere with unrelated keyboard/mouse input.
-5. **WindowGuard** — best-effort new/restore/maximize rescue to the main rectangle; preserve intentional auxiliary placement where possible and leave other monitors untouched.
+5. **WindowGuard** — best-effort new/restore/maximize safe placement, live drag constraint, and a narrowly scoped **oversized-window rescue state** that repositions one unshrinkable window in four directions without battling the normal guard; preserve intentional auxiliary placement and leave other monitors untouched.
 6. **SafeDesktopShell** — independent dedicated taskbar, launcher, app switching, settings and system control access in the main rectangle. It is **not** an Explorer shell replacement. Native taskbar coexistence and optional hiding must be reversible.
 7. **ProfileLifecycle** — first-run review/enable, persisted last-enabled profile, sign-in autostart, topology validation, hotkey disable, failure status, safe shutdown.
 
@@ -47,6 +47,27 @@ If no valid region exists in the attempted direction, stop at the permitted edge
 ### Why not just ClipCursor?
 
 A single global rectangular clamp cannot express a usable right-hand portion plus external screens positioned beyond a forbidden central/left region. The permitted set is a union of areas with explicit crossing transitions. The Windows input adapter is **a hypothesis to validate**, not a guarantee of universal pixel-perfect interception; `WH_MOUSE_LL` is a candidate with callback/timing limitations.
+
+## Oversized-window rescue: separate exception state
+
+**User requirement:** for a window too large to fit any practical intact rectangular work area, offer first-version **up/down/left/right position shifting**, exposing currently hidden controls in the healthy main area without changing physical monitor settings or injecting into the app.
+
+Candidate state machine (interaction details require agreement and Windows tests):
+
+```text
+NORMAL_WINDOW --[full containment impossible + user enters]--> RESCUE(window-id)
+RESCUE(window-id) --[direction input]--> RESCUE(window-id, shifted-position)
+RESCUE(window-id) --[reset/exit]--> NORMAL_WINDOW or SAFE_FALLBACK
+RESCUE(window-id) --[window closed, target lost, topology invalid]--> SAFE_FALLBACK
+```
+
+- Mark exactly one target window as the exception; pause its normal full-containment clamp while still guarding the pointer and all other ordinary windows.
+- Reposition the window using bounded Win32 APIs (for example `SetWindowPos`) and safe visible controls. This is **window movement**, not content scrolling, scaling, clipping or a true virtual-screen pan. Hidden parts remain outside the healthy viewing rectangle until moved back.
+- Persist/recover the selected window's prior position **in memory only as needed**; do not persist sensitive titles/content or reapply stale handles across restart.
+- Keep the control panel fully inside healthy pixels and keyboard-operable. Avoid moving it along with the rescued window.
+- Never fight an app enforcing its own position/minimum dimensions; stop repeated attempts and offer manual/keyboard fallback.
+- Underlying Windows constraints include application-defined minimum tracking sizes (`WM_GETMINMAXINFO`) and the limits of cross-process window repositioning; **success requires real Windows integration testing**.
+- Separate **agreed functionality** (rescue and 4-way shifting) from **undecided UX** (automatic prompt/manual launch, step sizes, control layout, reset behavior).
 
 ## Main area, windows and desktop shell
 

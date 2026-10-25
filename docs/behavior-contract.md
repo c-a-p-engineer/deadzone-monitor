@@ -23,6 +23,7 @@ The initial user scenario is a broken left portion of a built-in laptop panel, b
 | Windows | **Agreed** | Keep supported windows wholly inside intact space when possible: move first, resize if needed, and use the main rectangle for maximize. Do not disturb valid auxiliary placements. |
 | Taskbar | **Agreed** | Dedicated familiar Windows-style taskbar fitted completely inside the main rectangle, dockable on its top, bottom, left or right edge (default bottom), with suitable horizontal/vertical layout. |
 | Window dragging | **Agreed: stop at boundary (A)** | During a drag, prevent the supported window rectangle from crossing into the dead zone; do not permit temporary hidden overlap and wait for mouse release. Minimum-size exceptions require safe fallback. |
+| Oversized-window rescue | **Agreed: rescue mode (A), initial version** | When an ordinary application's minimum dimensions exceed intact space, provide dedicated **four-direction panning/position shifting** to reveal the hidden portions from a healthy display area; never trap keyboard or pointer input. |
 | Everyday shell interaction | **Agreed** | A dedicated launch/control UI may replace day-to-day access to native Start/notifications/controls. It need not clone the whole Windows shell. |
 | Standalone laptop | **Agreed** | Common daily actions must be reachable without an external monitor. |
 | Auto start/restore | **Agreed** | After initial opt-in, subsequent Windows sign-ins should auto-start and restore the prior enabled profile. |
@@ -50,6 +51,7 @@ The initial user scenario is a broken left portion of a built-in laptop panel, b
 | DZ-05 | Preserve normal access to every connected external monitor. | Left/right external screens, two external screens, negative coordinates, and dead-zone crossings allow deliberate outward and return movement. |
 | DZ-06 | Prefer main-area placement for ordinary new/restore/maximize windows, and rescue inaccessible windows. | Ordinary supported windows remain operable on the intact screen; auxiliary placement by user is preserved where possible; external-display windows are not repositioned. |
 | DZ-14 | Keep the full bounds of a supported window out of the dead zone **during manual dragging**. | While the mouse button remains down, a dragged window stops at the last valid bounds before an overlap; no late snap-back, jitter, or repeated fights with the application. If OS/app restrictions prevent full containment, preserve recovery and show an exception. |
+| DZ-16 | Provide **initial-version four-direction rescue mode** for supported windows that cannot fit in the selected healthy rectangle. | If a minimum-size or otherwise unshrinkable window cannot be fully contained, user can move its visible subsection into healthy space via directional controls or keyboard, return/reset/exit safely, and avoid interference from the normal auto-correction loop. |
 | DZ-07 | Fit a dedicated taskbar/launcher into the **main** intact rectangle. | It docks to any of the main rectangle's **four edges**, default bottom, supports horizontal/vertical layouts and never spans excluded pixels; it launches/switches apps and offers essential controls. |
 | DZ-15 | Offer familiar and accessible taskbar presentation, with dedicated-bar show/hide and reversible native coexistence options. | User can select a dedicated-bar visibility preference without losing a way to operate Windows; native taskbar behavior is documented honestly and no per-monitor hide feature is claimed without Windows testing. |
 | DZ-08 | Support everyday laptop-only usage through dedicated UI, even if Windows-native panels cannot be repositioned. | With all external screens unplugged, user can start/switch apps, open files/settings, adjust volume/network, see clock/battery, and reach power controls from intact space, where OS capabilities permit. |
@@ -58,6 +60,21 @@ The initial user scenario is a broken left portion of a built-in laptop panel, b
 | DZ-11 | Provide reliable emergency disable and fail-open behavior. | Keyboard-only disable works without tray/mouse; stop/crash/topology mismatch removes interception and avoids persistent OS cursor clipping or a stranded cursor. |
 | DZ-12 | Remain safe across topology and resolution/DPI/orientation changes. | Recalculate when safe or suspend restriction with an accessible warning; do not apply an old rectangle to a misidentified monitor. |
 | DZ-13 | Operate privately and without exceptional system permissions. | No admin/driver/service required for Mode A's intended normal-desktop path; no telemetry, input-content recording, screenshot capture, or network requirement by default. |
+
+## Oversized-window rescue mode — agreed initial requirement
+
+**Normal-mode invariant:** Keep a supported window fully inside an intact rectangle wherever feasible. Prefer (1) translate without resizing, then (2) resize only as necessary; preserve deliberate valid auxiliary placements.
+
+**Exception:** If an ordinary window's minimum size exceeds every useful intact placement, support a dedicated **four-direction rescue/panning mode** in the initial version. This does **not** scale the third-party app's content or turn the monitor into a virtual display. It temporarily **repositions the oversized whole window**, so different parts are visible within the same healthy viewport in succession. Some of the window may lie outside the healthy viewport **during this explicitly scoped rescue exception**; it is impossible to show the whole oversized app simultaneously without app-specific reflow or scaling. Pointer exclusion remains active.
+
+Agreed baseline behavior:
+- User can shift view toward **left / right / up / down** and return to a safe baseline using an entirely accessible control panel; keyboard-only access and exit are required.
+- The exception applies to **one selected affected window**, never silently disables monitoring of all other windows or moves an unaffected external-monitor window.
+- While rescue is active for that window, suspend the normal drag/placement clamp for that window **only** so the window manager does not immediately undo intentional rescue shifts. Resume ordinary safeguards after exit and restore the last valid/safe position when possible.
+- Do not continuously force moves on uncooperative windows, steal focus, warp the pointer into the forbidden region, or break emergency-disable.
+- Accessibility and a recoverable failure state take precedence when an app's integrity, window type, or positioning constraints prevent movement.
+
+**Still open:** automatic prompt versus manual entry to rescue; placement of rescue controls; step sizes and acceleration; restore-on-exit behavior if no fully valid placement exists; interaction with mouse drag, full-screen surfaces and transient dialogs. Do not silently regard one solution as approved.
 
 ## Dedicated taskbar and shell access — feature boundary
 
@@ -111,7 +128,7 @@ Deterministic geometry tests alone are insufficient: pointer hooks, Windows shel
 ## Additional acceptance checks from the 2026-10-25 discussion
 
 - Check live dragging against a dead rectangle along each edge and a rectangle in the middle, including dragging windows near every corner; a supported window must not overlap dead pixels even before the mouse button is released.
-- Check oversized/minimum-size windows and supported user-accessible fallback instead of claiming impossible full containment.
+- Check oversized/minimum-size windows and **four-direction rescue/panning controls**, safe keyboard-only reset/exit, scoped exception to ordinary window clamping, and no interference with normal or external-monitor windows; do not claim impossible simultaneous full containment.
 - Verify the dedicated taskbar fits inside main for **all four docking directions** and stays navigable in a narrow work rectangle.
 - Confirm push-through uses Windows' existing monitor arrangement (including negative virtual coordinates) without changing resolution, primary assignment or screen positions.
 - Test the proposed **40 px-equivalent** sensitivity against alternative user-selectable settings; units and default may be revised from observed data.
