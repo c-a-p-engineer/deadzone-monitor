@@ -98,6 +98,12 @@ SafeDesktopShell should focus on:
 
 Third-party notification-area icons, native Start, protected overlays and all possible dialogs are **not** assumed trivially clonable. Test and document missing functions before claiming standalone usefulness.
 
+## Guided first-run setup and detailed editing
+
+Propose a **wizard shell** around existing MonitorTopology and ZoneModel, not a separate virtual-display implementation. Its steps are: (1) select and validate physical target; (2) choose a damaged rectangle on a scaled schematic or with exact local physical-pixel input; (3) accept or override a suggested intact main rectangle; (4) review the preview, keyboard emergency exit and explicit activation. The wizard must remain keyboard navigable even when its initial window lands partially on broken pixels, with an accessible reposition/recovery path to be proven on Windows.
+
+Keep configuration in a **draft, unenforced** state until the explicit enable/try action. Later detailed settings edit the same validated model, maintaining the previous usable profile until a candidate is accepted. Actual temporary trial timeout, confirmation and automatic rollback semantics are an **open decision**. Preview is not equivalent to having proven cursor interception or system-shell safety on Windows hardware.
+
 ## Startup, persistence and recovery
 
 ```text
