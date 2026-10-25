@@ -25,6 +25,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide **expand on user-initiated rescue start; thereafter manual-only collapse/expand**, never triggered by idle timeout or application focus change.
 - [x] Decide rescue directional tap steps and held continuous movement, with configurable step distance and speed.
 - [x] Decide safe-baseline positioning on explicit rescue End, with a reachable way to re-enter rescue.
+- [x] Decide **guided first-run setup wizard** (physical target -> damaged rectangle -> main work rectangle -> safety review), with **later detailed-settings editing**.
 - [ ] Resolve unresolved parameters and feasibility questions identified in the behavior contract.
 
 ## Phase 1 — safe geometry and pointer proof
@@ -55,7 +56,11 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [ ] Implement configurable single-tap step and press-and-hold directional rescue movement; validate settings and release behavior.
 - [ ] On explicit rescue End, reposition only the affected oversized window to a reachable safe baseline with an operable titlebar or equivalent keyboard route, then allow rescue to be started again. Test rejected moves and unchanged concurrent sessions.
 - [ ] Best-effort spawn, restore, maximize, dialog rescue; never alter external monitor windows.
-- [ ] Visual and numeric rectangle configuration, safety preview and rollback.
+- [ ] Implement keyboard-accessible first-run **wizard**: monitor choice, scaled dead-zone preview and physical-pixel numeric input, intact main suggestion/override, emergency-escape demonstration and explicit enable.
+- [ ] Implement post-setup **detailed settings** that edit the same underlying validated profile and retain a recoverable previous configuration.
+- [ ] Test first-time wizard with broken-panel layout, optional external monitor, entirely keyboard-driven completion/cancellation and later detailed edits; do not enable guarding before explicit consent.
+- [ ] Resolve **trial duration, confirm action and automatic rollback** behavior before implementing the trial flow.
+
 - [ ] Save last enabled profile with stable target identity; validate on restore.
 - [ ] Hot-plug, disconnect/reconnect, DPI, orientation, resolution and sleep/resume safety handling.
 - [ ] Windows sign-in **post-login** automatic startup and restoration, after escape gate passes.
@@ -96,7 +101,7 @@ For every future PR: list changed requirement IDs, actual build/test commands, O
 
 1. Push-through **trial sensitivity** of 40 px-equivalent (final threshold, input units, accumulation/decay/reset), diagonals, and Windows-topology-preserving destination mapping.
 2. Main-area best-fit algorithm, too-small dimensions and auxiliary-area behavior.
-3. Visual zone editing UI, safe preview/undo and keyboard-only accessibility.
+3. Wizard on-screen placement/recovery for users with preexisting damaged displays; trial preview/undo **timeout and automatic rollback**. **Guided steps plus detailed-settings editing are agreed.**
 4. Native taskbar reversible hiding/coexistence (candidate Safe-first / both / native-first), effect on external monitors, and third-party tray/notification access.
 5. Which everyday shell operations work safely from the dedicated UI across Windows versions.
 6. Monitor identity, saved profiles across topology changes, and auto-start mechanics.
