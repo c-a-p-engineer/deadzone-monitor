@@ -33,7 +33,7 @@ var tests = new (string Name, Action Run)[]
     {
         var layout = Layout(new(200, 40, 500, 660), new(0, 0, 200, 700));
         var result = MainAreaAdvisor.Recommend(layout, minimumWidth: 250, minimumHeight: 150);
-        Eq(new PixelRect(700, 0, 300, 700), result);
+        Eq<PixelRect?>(new PixelRect(700, 0, 300, 700), result);
         IsFalse(MainAreaAdvisor.Recommend(layout, 700, 200).HasValue);
     }),
 
@@ -104,7 +104,7 @@ var tests = new (string Name, Action Run)[]
         Eq(25L, partial.AccumulatedInward);
         var result = router.Advance(Contact(BlockedEdge.Left, 15, 0));
         Eq(RoutingOutcome.Jump, result.Outcome);
-        Eq(new PixelPoint(500, 250), result.Landing);
+        Eq<PixelPoint?>(new PixelPoint(500, 250), result.Landing);
     }),
 
     ("diagonal only accumulates inward-normal attempted motion", () =>
@@ -146,7 +146,7 @@ var tests = new (string Name, Action Run)[]
         Eq(0L, touch.AccumulatedInward);
         var result = router.Advance(new(BlockedEdge.Left, BlockedEdge.Top, 100, 40, 450));
         Eq(RoutingOutcome.Jump, result.Outcome);
-        Eq(new PixelPoint(450, 300), result.Landing);
+        Eq<PixelPoint?>(new PixelPoint(450, 300), result.Landing);
     }),
 
     ("ambiguous corner ties refuse transfer until retreat", () =>
