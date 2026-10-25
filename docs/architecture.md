@@ -104,6 +104,12 @@ Propose a **wizard shell** around existing MonitorTopology and ZoneModel, not a 
 
 Keep configuration in a **draft, unenforced** state until the explicit enable/try action. Later detailed settings edit the same validated model, maintaining the previous usable profile until a candidate is accepted. Actual temporary trial timeout, confirmation and automatic rollback semantics are an **open decision**. Preview is not equivalent to having proven cursor interception or system-shell safety on Windows hardware.
 
+## First-run 60-second trial transaction
+
+An approved onboarding draft remains **uncommitted** until the user explicitly tests it and confirms within **60 seconds**. Model the transitions as `DRAFT -> TRIAL_ACTIVE -> CONFIRMED`, and `TRIAL_ACTIVE -> ROLLED_BACK` on timeout/cancel, or `TRIAL_ACTIVE -> FAIL_OPEN` on invalid geometry, lost target or emergency disable. Keep a snapshot of the last *confirmed* validated state; on expiry restore that snapshot, or disable intervention if none exists. The on-screen countdown and confirmation controls must stay in reachable intact space, with keyboard-only operation. Starting the trial is separate from committing the profile and enabling next-sign-in autostart.
+
+Engineering constraints to validate on Windows: use a monotonic deadline, handle suspend/resume without extending an unsafe active trial indefinitely, and ensure that timeout and confirmation cannot both commit. If the process exits unexpectedly, fail open; do not assume a background watchdog survives its process or that unconfirmed settings should restart automatically. Whether later advanced-setting edits use the same timed trial is an open product question.
+
 ## Startup, persistence and recovery
 
 ```text
