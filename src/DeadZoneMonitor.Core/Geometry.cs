@@ -162,30 +162,39 @@ public sealed class ZoneLayout
 /// </summary>
 public static class MainAreaAdvisor
 {
-    public static IReadOnlyList<PixelRect> Candidates(ZoneLayout layout)
+    // The wizard can call this BEFORE a main area is selected, using local
+    // physical pixel coordinates. No ZoneLayout instance is required.
+    public static IReadOnlyList<PixelRect> Candidates(PixelRect targetBounds, PixelRect deadZone)
     {
-        ArgumentNullException.ThrowIfNull(layout);
-        var bounds = layout.Target.Bounds;
-        var dead = layout.DeadZone;
+        targetBounds.Validate();
+        deadZone.Validate();
+        if (!targetBounds.Contains(deadZone))
+            throw new ArgumentException("Dead zone must fit the selected monitor.", nameof(deadZone));
+
         var result = new List<PixelRect>(4);
-
-        if (dead.Y > bounds.Y)
-            result.Add(new(bounds.X, bounds.Y, bounds.Width, dead.Y - bounds.Y));
-        if (dead.Bottom < bounds.Bottom)
-            result.Add(new(bounds.X, dead.Bottom, bounds.Width, bounds.Bottom - dead.Bottom));
-        if (dead.X > bounds.X)
-            result.Add(new(bounds.X, bounds.Y, dead.X - bounds.X, bounds.Height));
-        if (dead.Right < bounds.Right)
-            result.Add(new(dead.Right, bounds.Y, bounds.Right - dead.Right, bounds.Height));
-
+        if (deadZone.Y > targetBounds.Y)
+            result.Add(new(targetBounds.X, targetBounds.Y, targetBounds.Width, deadZone.Y - targetBounds.Y));
+        if (deadZone.Bottom < targetBounds.Bottom)
+            result.Add(new(targetBounds.X, deadZone.Bottom, targetBounds.Width, targetBounds.Bottom - deadZone.Bottom));
+        if (deadZone.X > targetBounds.X)
+            result.Add(new(targetBounds.X, targetBounds.Y, deadZone.X - targetBounds.X, targetBounds.Height));
+        if (deadZone.Right < targetBounds.Right)
+            result.Add(new(deadZone.Right, targetBounds.Y, targetBounds.Right - deadZone.Right, targetBounds.Height));
         return result.AsReadOnly();
     }
 
-    public static PixelRect? Recommend(ZoneLayout layout, long minimumWidth, long minimumHeight)
+    public static IReadOnlyList<PixelRect> Candidates(ZoneLayout layout)
+    {
+        ArgumentNullException.ThrowIfNull(layout);
+        return Candidates(layout.Target.Bounds, layout.DeadZone);
+    }
+
+    public static PixelRect? Recommend(
+        PixelRect targetBounds, PixelRect deadZone, long minimumWidth, long minimumHeight)
     {
         if (minimumWidth <= 0 || minimumHeight <= 0)
             throw new ArgumentOutOfRangeException(nameof(minimumWidth), "Minimum dimensions must be positive.");
-        return Candidates(layout)
+        return Candidates(targetBounds, deadZone)
             .Where(rect => rect.Width >= minimumWidth && rect.Height >= minimumHeight)
             .OrderByDescending(rect => rect.Area)
             .ThenByDescending(rect => Math.Min(rect.Width, rect.Height))
@@ -193,5 +202,11 @@ public static class MainAreaAdvisor
             .ThenBy(rect => rect.X)
             .Select(rect => (PixelRect?)rect)
             .FirstOrDefault();
+    }
+
+    public static PixelRect? Recommend(ZoneLayout layout, long minimumWidth, long minimumHeight)
+    {
+        ArgumentNullException.ThrowIfNull(layout);
+        return Recommend(layout.Target.Bounds, layout.DeadZone, minimumWidth, minimumHeight);
     }
 }
