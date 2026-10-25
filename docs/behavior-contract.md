@@ -41,7 +41,7 @@ The initial user scenario is a broken left portion of a built-in laptop panel, b
 | Everyday shell interaction | **Agreed** | A dedicated launch/control UI may replace day-to-day access to native Start/notifications/controls. It need not clone the whole Windows shell. |
 | Standalone laptop | **Agreed** | Common daily actions must be reachable without an external monitor. |
 | Auto start/restore | **Agreed** | After initial opt-in, subsequent Windows sign-ins should auto-start and restore the prior enabled profile. |
-| Safe escape | **Required safety invariant** | A keyboard-only emergency disable and fail-open behavior prevent being trapped. |
+| Safe escape | **Agreed: immediate global keyboard shortcut (A)** | In the supported Windows user desktop, a global shortcut immediately disables DeadZone Monitor's guarding **without any confirmation or long hold**. Release pointer/window intervention, cancel active rescue movement and unconfirmed 60-second trials; ordinary Windows input resumes. Exact key combination and post-disable reactivation policy require later decisions and real-device validation. |
 | Pre-sign-in UI | **Deferred Mode B** | Track as future investigation, never block Mode A on it. |
 
 ## Terms and geometry
@@ -86,6 +86,7 @@ The initial user scenario is a broken left portion of a built-in laptop panel, b
 | DZ-09 | Persist target identity, zone, main rectangle, crossing preferences, and UI settings locally. | Sign-out/reboot and the next sign-in restore the last **explicitly enabled and validated** profile without requiring repeated manual setup. |
 | DZ-10 | Auto-launch **after** Windows sign-in. First-run activation requires user review. | First setup shows safe preview/hotkey; subsequent successful sign-ins restore an enabled validated profile. Do not activate on unknown monitors or invalid data. |
 | DZ-11 | Provide reliable emergency disable and fail-open behavior. | Keyboard-only disable works without tray/mouse; stop/crash/topology mismatch removes interception and avoids persistent OS cursor clipping or a stranded cursor. |
+| DZ-31 | Provide **immediate, confirmation-free emergency disable** through a global keyboard shortcut. | From any ordinary app on the supported Windows desktop, invoke the shortcut once (no hold or confirmation): pointer interception and window guards stop immediately, ongoing rescue shifts stop, active rescue exceptions are invalidated and unconfirmed 60-second trials are cancelled **without committing draft settings**. OS-native input remains available. A second accidental keypress cannot silently re-enable guarding. Unsupported secure/UAC desktops are not claimed. |
 | DZ-12 | Remain safe across topology and resolution/DPI/orientation changes. | Recalculate when safe or suspend restriction with an accessible warning; do not apply an old rectangle to a misidentified monitor. |
 | DZ-13 | Operate privately and without exceptional system permissions. | No admin/driver/service required for Mode A's intended normal-desktop path; no telemetry, input-content recording, screenshot capture, or network requirement by default. |
 
@@ -147,6 +148,12 @@ After onboarding, provide a **separate detailed-settings view** to revisit and e
 
 **Classification principle:** any setting whose application could make the pointer, windows, settings or escape controls inaccessible is safety-critical even if it is later exposed through a different UI category. **Dedicated bar** docking/visibility is explicitly trial-gated. Any change to **native Windows taskbar** behavior remains an unverified, separate integration decision; do not silently classify a native-shell alteration as safe.
 
+## Emergency shortcut — agreed initial behavior
+
+In the supported **ordinary Windows desktop**, a **global keyboard shortcut** must immediately perform **emergency disable**, with **no confirmation dialog, delay or long-press gesture**. It must work without access to the dedicated taskbar, rescue panel, mouse, or external display. The shutdown sequence prioritizes releasing input interception and any cursor restrictions; stop continuous rescue motion and window-management enforcement; cancel any pending 60-second configuration trial **without saving the draft**. Emergency disable takes priority over pending confirmation/timeout and must never itself trigger automatic restoration of restrictions. Do not require a third-party application to be focused, and do not hook keystroke content beyond the minimal registered chord. The shortcut is a user-level normal-desktop capability, not a guarantee inside secure login/UAC or exclusive-fullscreen surfaces.
+
+**Still open:** the actual collision-free keyboard chord and whether emergency disable persists as a disabled preference across the next Windows sign-in versus only the current session. Recovery/re-enable must be an intentional user action, not a second invocation of the same emergency shortcut.
+
 ## Lifecycle and safety
 
 1. **First run:** show target/rectangle/main-area preview; make emergency keyboard disable discoverable and testable; require explicit first enable. Initial activation enters a **60-second uncommitted trial**; only confirmation persists enabled settings, while cancel/expiry restores the previously confirmed state or disables guarding.
@@ -155,7 +162,7 @@ After onboarding, provide a **separate detailed-settings view** to revisit and e
 4. **User disable, exit, forced termination:** normal OS pointer movement returns; no persistent global clip or driver modification survives.
 5. **Re-enable:** require valid geometry and an operational keyboard escape path before enabling interception.
 
-A reliable emergency hotkey combination, conflicting shortcuts, safe reactivation strategy and interaction with unexpected shutdown require explicit prototype tests.
+The emergency action is agreed as an immediate no-confirmation keyboard shortcut; its exact conflict-free combination, disabled-state persistence across restart, and recovery from unexpected shutdown require explicit prototype tests.
 
 ## Out-of-scope for initial Mode A
 
