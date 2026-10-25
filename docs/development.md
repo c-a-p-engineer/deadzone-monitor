@@ -13,6 +13,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide **push-through cursor jump** rather than immediate jump.
 - [x] Decide **reset accumulated push-through distance when the pointer retreats from a blocked edge into healthy space**; renewed contact begins at zero (no carryover).
 - [x] Decide **diagonal push-through uses only the inward normal component** of attempted movement at the contacted edge, ignoring tangential movement and diagonal total distance.
+- [x] Decide **corner contact edge priority**: lock first-contacted edge; simultaneous contact chooses larger inward-normal component; ambiguous tie never jumps.
 - [x] Decide standalone usability and dedicated taskbar/launcher over native shell fidelity.
 - [x] Decide last-settings restoration after user sign-in and emergency disable.
 - [x] Decide **four-edge docking** for the dedicated taskbar (bottom by default) and user-oriented native coexistence/visibility goals.
@@ -44,7 +45,8 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [ ] Validated monitor selection and physical-pixel-to-Windows coordinate conversion.
 - [ ] Compare proposed 40 px-equivalent sensitivity against real input-unit measurements; verify reset and false-positive behavior.
 - [ ] Test partial blocked-edge push followed by retreat into allowed space and a new contact: require full fresh push before crossing. Check tangential sliding (not departure), sensor jitter, corners, diagonals, and left/right external-monitor routes without unintended jumps.
-- [ ] Verify inward-normal projection for oblique and tangent movement separately at each of four rectangle edges (mouse and touchpad); tangential travel alone never reaches crossing threshold. Verify retreat resets and do not assume corner-edge priority before its decision.
+- [ ] Verify inward-normal projection for oblique and tangent movement separately at each of four rectangle edges (mouse and touchpad); tangential travel alone never reaches crossing threshold and retreat resets.
+- [ ] Test all four rectangle corners: sequential first-contact lock, truly simultaneous unequal inward components, exact/ambiguous tie with no jump, no mid-gesture edge oscillation, and fresh selection after retreat. Test laptop-only plus external monitors.
 - [ ] Prototype **push-through** state machine, attempted movement delta capture and configurable sensitivity.
 - [ ] Define and test portal mapping (internal healthy regions and external screens) with a reversible route.
 - [ ] Prototype keyboard-only fail-open, hook release, process death and recovery.
@@ -120,7 +122,7 @@ For every future PR: list changed requirement IDs, actual build/test commands, O
 
 ## Open product/engineering decisions (not yet approved)
 
-1. Push-through **trial sensitivity** of 40 px-equivalent (final threshold and input units), **corner-edge priority**, pointer jitter tolerance, and Windows-topology-preserving destination mapping. **Accumulation uses only inward perpendicular movement and resets on retreat; decided.**
+1. Push-through **trial sensitivity** of 40 px-equivalent (final threshold and input units), contact-order/jitter tolerance, and Windows-topology-preserving destination mapping. **Normal-only accumulation, retreat reset and first-contact corner priority are decided.**
 2. Main-area best-fit algorithm, too-small dimensions and auxiliary-area behavior.
 3. Wizard on-screen placement/recovery for users with preexisting damaged displays, plus **keyboard recovery and on-screen confirmation when the dedicated taskbar is hidden during its agreed 60-second trial**. **Guided steps, detailed-settings editing and 60-second rollback for first-run and critical post-setup edits are agreed.**
 4. **Native taskbar hide/reposition is deferred beyond v0.1**; v0.1 keeps it untouched. Confirm coexistence and document unavailable tray/notification functions. Optional advanced native integration needs a separate feasibility investigation.
