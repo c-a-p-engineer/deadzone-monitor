@@ -127,11 +127,11 @@ On **first run**, use a guided wizard rather than exposing all settings at once:
 3. **Select main intact rectangle:** offer a best-fit candidate and allow explicit override; keep other intact pixels as auxiliary space.
 4. **Review and safety preview:** show the chosen display/areas and emergency keyboard escape; require deliberate opt-in before activation. No silent activation while moving between wizard steps.
 
-After onboarding, provide a **separate detailed-settings view** to revisit and edit the target selection, damaged rectangle, main intact rectangle, push-through settings and dedicated shell preferences. Revalidate changes and preserve a keyboard-operable cancellation/recovery path. The **trial/confirmation timeout and automatic rollback behavior are not yet decided**; do not imply that a countdown has already been agreed.
+After onboarding, provide a **separate detailed-settings view** to revisit and edit the target selection, damaged rectangle, main intact rectangle, push-through settings and dedicated shell preferences. Revalidate changes and preserve a keyboard-operable cancellation/recovery path. **Initial enable trial (agreed):** after the user explicitly starts testing a validated draft, show a confirmation interface fully inside the intact main area and give **60 seconds** to choose Confirm. Confirmation saves/enables the new profile. If the user cancels or does not confirm within 60 seconds, restore the last confirmed valid active configuration, or disable guarding when no prior confirmed configuration exists. Never persist an unconfirmed draft as enabled for the next sign-in. The keyboard emergency stop acts immediately rather than waiting for the timeout. Trial timing must remain safe after suspension, failure, or monitor change. **Whether later detailed-settings edits also require the same timed trial remains undecided.**
 
 ## Lifecycle and safety
 
-1. **First run:** show target/rectangle/main-area preview; make emergency keyboard disable discoverable and testable; require explicit first enable.
+1. **First run:** show target/rectangle/main-area preview; make emergency keyboard disable discoverable and testable; require explicit first enable. Initial activation enters a **60-second uncommitted trial**; only confirmation persists enabled settings, while cancel/expiry restores the previously confirmed state or disables guarding.
 2. **Later sign-ins:** run as the same user and automatically restore the last enabled, validated configuration after desktop initialization.
 3. **Monitor missing/ambiguous, invalid zone, failure:** suspend restrictions and show accessible failure status. Retain the saved profile for later recovery, but do not apply it to a guessed device.
 4. **User disable, exit, forced termination:** normal OS pointer movement returns; no persistent global clip or driver modification survives.
@@ -184,5 +184,5 @@ Deterministic geometry tests alone are insufficient: pointer hooks, Windows shel
 - Precise main-area automatic suggestion and restrictions for very small surviving areas.
 - Whether a center hole's tiny surviving strips are suitable auxiliary areas or should be optional.
 - Reversible Windows-native taskbar coexistence/hiding strategy (including whether proposed Safe-first / both / native-first presets are feasible), plus third-party tray/notification fallback.
-- Wizard preview presentation and keyboard-only initial positioning on a damaged screen; **trial duration and confirmation/automatic rollback policy**; chosen hotkey, startup implementation, profile matching and monitor identity fidelity.
+- Wizard preview presentation and keyboard-only initial positioning on a damaged screen; **whether the 60-second trial also applies to later detailed-settings edits**; chosen hotkey, startup implementation, profile matching and monitor identity fidelity.
 - Which difficult system dialogs/overlays require alternate access rather than relocation.
