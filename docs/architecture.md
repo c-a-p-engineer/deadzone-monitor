@@ -74,6 +74,10 @@ RESCUE(window-id) --[target lost, topology invalid, global emergency disable]-->
 - Underlying Windows constraints include application-defined minimum tracking sizes (`WM_GETMINMAXINFO`) and the limits of cross-process window repositioning; **success requires real Windows integration testing**.
 - Separate **agreed functionality** (automatic detection + user-activated start, four-way shifting, concurrent independent per-window rescue, one focus-follow/manual-picker **movable/collapsible floating panel**) from **undecided UX** (offer/banner style, panel startup location and persistence, post-last-session visibility, precise manual-override precedence, repeated-offer policy, step sizes and reset behavior).
 
+### Rescue exit and baseline recovery
+
+When a user ends a rescue session, calculate the safest attainable position for that target window: preserve an operable titlebar/grab or keyboard-controlled route within intact main space. Full containment remains the normal preference, but an unshrinkable oversized window may need a partially hidden baseline. End and reset only that session, never the other concurrently rescued windows. Keep a visible or keyboard-reachable path to start rescue again. If the app rejects relocation, stop repeating moves and expose an accessible fallback; do not promise every titlebar button can be visible simultaneously. Exact baseline scoring and rejected-move UX remain to be designed and validated on Windows.
+
 ### Rescue directional interaction
 
 Each directional button supports a fixed-distance tap and a continuous press-and-hold shift. Step distance and hold speed are independently user configurable. Continuous motion stops when the button is released. Commands remain associated with the selected rescue session; numeric defaults and hold timing require validation.
