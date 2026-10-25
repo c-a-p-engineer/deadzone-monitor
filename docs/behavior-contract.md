@@ -15,6 +15,7 @@ The initial user scenario is a broken left portion of a built-in laptop panel, b
 | Decision | Status | Meaning |
 | --- | --- | --- |
 | Arbitrary rectangular dead zone | **Agreed, initial version** | A user chooses any X/Y/width/height rectangle on a selected display; not limited to screen halves or edges. |
+| First-run trial confirmation | **Agreed: 60-second confirm-or-revert (A)** | After explicit trial activation, allow **60 seconds** to confirm; otherwise automatically restore the prior valid profile or disable guarding if this is the first setup. An emergency keyboard-only escape remains available immediately. |
 | First-run configuration | **Agreed: guided wizard (A)** | Step through physical monitor selection, dead-zone rectangle, user-selected main intact rectangle, and preview/safety review before enabling; advanced settings remain editable later. |
 | Rectangle selection UI | **Agreed direction** | Visual preview/drag selection and editable physical-pixel coordinates; exact controls remain design work. |
 | Number of zones | **Initial design boundary** | One rectangular dead zone per selected monitor profile initially; multiple regions are a future extension, not yet agreed for initial delivery. |
@@ -53,6 +54,7 @@ The initial user scenario is a broken left portion of a built-in laptop panel, b
 
 | ID | Required behavior | Verifiable acceptance |
 | --- | --- | --- |
+| DZ-26 | Protect initial enable with a **60-second temporary trial** and automatic rollback. | Starting trial requires explicit action, shows a confirmation UI entirely in verified reachable space, and does not commit the draft profile. An explicit confirmation before expiry commits it; timeout/cancel reverts to the previous valid enabled profile or disabled normal behavior on first installation. A keyboard-only emergency disable bypasses the countdown. |
 | DZ-25 | Provide a **guided first-run setup wizard** and editable detailed settings after setup. | The user can complete target-monitor selection, visual or numeric dead-zone entry, suggested/overridden main rectangle, and preview/safety review in sequence before deliberate activation. Keyboard operation and a return/edit route remain accessible on a damaged display; after setup, detailed settings can modify and validate these values without reinstalling. |
 | DZ-01 | Select a physical target display and define a rectangular dead zone anywhere on it. | Coordinates are editable in physical px, visual preview matches them, and a center rectangle as well as an edge rectangle are accepted. |
 | DZ-02 | Select one intact main work rectangle, leaving all other healthy pixels usable as auxiliary space. | No main rectangle overlaps the forbidden area; selection can be changed without editing code; auxiliary areas remain pointer-reachable. |
