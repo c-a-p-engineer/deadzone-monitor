@@ -32,8 +32,8 @@ Read [the behavior contract](../../../docs/behavior-contract.md) for main versus
 1. Confirm the supported window cannot fit within a useful intact rectangle despite permitted move/resize. Do not offer rescue for an unrelated external-window or an app that already fits.
 2. **Offer, do not auto-start:** render an accessible Start rescue action wholly in healthy/main space; keep the normal guard until the user explicitly activates the rescue for that window. Do not steal focus.
 3. Capture the original placement safely and mark **only that window** as the current rescue exception. Do not stop pointer guarding or protections for other windows.
-4. Offer controls to move the window **up/down/left/right** and a reset/exit action entirely inside intact space; movement reveals previously hidden content sequentially.
-5. Stop if the target closes, changes privilege, refuses moves, changes display or repeated attempts fail. Do not turn attempted rescue into a tight reposition loop.
+4. Offer controls to move the window **up/down/left/right** and a reset/exit action entirely inside intact space; movement reveals previously hidden content sequentially. **Keep rescue session and shifted position across foreground-app changes and ordinary minimize/restore; never couple rescue lifetime to focus.**
+5. Close the session on explicit user End or target-window Close. Safety failures (target identity lost, topology change making state unsafe, emergency disable), privilege changes, refusal to move or repeated failure may trigger safe suspend/cleanup; do not turn attempted rescue into a tight reposition loop.
 6. On exit, restore a feasible and usable placement or surface a keyboard-accessible fallback if full containment remains impossible; clear the exception state.
 
 ## Verification

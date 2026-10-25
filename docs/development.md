@@ -18,6 +18,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Preserve Windows' monitor sizes/relative layout; allow user-adjustable push-through sensitivity with **40 px-equivalent as a tentative starting value**.
 - [x] Decide **initial-version oversized-window four-way rescue mode** with per-window scoped exception to ordinary full-containment guard.
 - [x] Decide **auto-detect then offer** rescue in healthy area: explicit user action starts it (no silent activation).
+- [x] Decide **rescue remains active across application switches** and ordinary minimize/restore; explicit user End or target window Close normally terminates it, safety fail-open can override.
 - [ ] Resolve unresolved parameters and feasibility questions identified in the behavior contract.
 
 ## Phase 1 — safe geometry and pointer proof
@@ -40,6 +41,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [ ] **Detect unfit supported windows**, show a keyboard-accessible **Start rescue** action inside healthy/main space, and require explicit user activation; suppress false offers for fit-capable windows, avoid focus theft.
 - [ ] **Four-direction rescue mode** for an oversized/minimum-size affected window, scoped to the selected window; implement keyboard-operable controls, reset/exit, avoid ordinary guard tug-of-war and verify no input trap.
 - [ ] Test 1600px-minimum-size window in 1200px healthy rectangle, both horizontal and vertical overflow, app refusal to move, external monitor unchanged, and topology changes during rescue.
+- [ ] Test active rescue with browser/other app foreground switching, target minimize/restore, repeat switching, user End, target Close, and emergency disable. Verify shifted position retention, independent other-window safety and clearing of stale window IDs.
 - [ ] Best-effort spawn, restore, maximize, dialog rescue; never alter external monitor windows.
 - [ ] Visual and numeric rectangle configuration, safety preview and rollback.
 - [ ] Save last enabled profile with stable target identity; validate on restore.
@@ -87,7 +89,8 @@ For every future PR: list changed requirement IDs, actual build/test commands, O
 5. Which everyday shell operations work safely from the dedicated UI across Windows versions.
 6. Monitor identity, saved profiles across topology changes, and auto-start mechanics.
 7. Hotkey selection, .NET version/packaging and release validation conditions.
-8. Rescue offer presentation (banner versus dedicated-taskbar button), duplicate/dismiss policy, arrow movement increments, exit/restore with no fully safe placement, and applicability to uncooperative/system windows. **Detection + explicit start** is decided.
+8. Rescue offer presentation (banner versus dedicated-taskbar button), duplicate/dismiss policy, arrow movement increments, exit/restore with no fully safe placement, and applicability to uncooperative/system windows. **Detection + explicit start and focus-switch persistence** are decided.
+9. Whether two or more oversize windows may retain independent concurrent rescue sessions or rescue is limited to one at a time.
 
 ## Rollback
 
