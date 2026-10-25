@@ -1,8 +1,8 @@
 # DeadZone Monitor
 
-A Windows utility **in design** to make a computer with a partly damaged screen usable by excluding bad pixels from pointer movement, window placement and everyday controls.
+A Windows utility **in early Phase 1 implementation** to make a computer with a partly damaged screen usable by excluding bad pixels from pointer movement, window placement and everyday controls.
 
-> **Status: requirements agreed / not yet implemented.** There is no working executable, tested Windows mouse hook, automated build or public release at this time.
+> **Status: Phase 1 experimental core source added; no usable Windows app yet.** The pure geometry model and push-through state machine are source-only and have **not been compiled or run in this environment**. No Win32 input hook, automatic enforcement, CI workflow or release exists.
 
 ## Product target: Mode A first
 
@@ -32,9 +32,21 @@ The **final push-through threshold/units, portal destination mapping, native Win
 
 Task-focused local skills live in [`.agents/skills/`](.agents/skills/). They are not copies of any private repository.
 
-## Planned implementation
+## Phase 1 implementation (experimental)
 
-C# / .NET on Windows with minimal Win32 interoperability. Specific SDK and packaging are to be selected after initial prototype evidence.
+The code under `src/DeadZoneMonitor.Core/` uses C# / .NET 10 with **no Windows hooks** or external NuGet dependencies:
+
+- `Geometry.cs`: validated physical-pixel rectangles, selected monitor identity, intact workspace candidates, forward landing and single-target offset correction.
+- `PushThroughRouter.cs`: deterministic blocked-edge gesture state, normal-only diagonal accumulation, first-contact corner priority, retreat reset, no-target safety.
+- `tests/DeadZoneMonitor.Core.Tests/`: a dependency-free console scenario harness covering these decisions. This is **test source, not test evidence** until run with the selected SDK.
+
+Run with the .NET 10 SDK:
+
+```powershell
+dotnet run --project tests/DeadZoneMonitor.Core.Tests/DeadZoneMonitor.Core.Tests.csproj
+```
+
+**Important:** this is not a cursor-control executable. The future Windows input adapter must provide validated boundary contacts and raw attempted motion; until the emergency hotkey, teardown path and actual Windows tests exist, nothing should intercept the user's pointer. Do not auto-start or install a mouse hook from this code. Current SDK and test behavior remain unverified on Windows. No GitHub Actions workflow was added.
 
 ## License
 
