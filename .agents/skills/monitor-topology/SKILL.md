@@ -16,6 +16,10 @@ description: Use when discovering monitors, identifying the damaged built-in pan
 4. Validate target existence, unique identity, valid bounds and zone area. If ambiguous, return `unresolved` and disable intervention.
 5. Recompute after attach/detach, resolution, rotation, scaling and resume events; make updates atomic from the routing engine's perspective.
 
+## Wizard integration
+
+For initial onboarding, provide an explicitly selected physical target monitor, correctly scaled local-pixel schematic and exact coordinate editing without modifying the OS monitor arrangement. Revalidate display identity, orientation and bounds between the wizard's monitor selection, area preview and explicit enable. Keep the configuration in draft mode until consent, and provide keyboard-only monitor selection and recovery when the damaged panel cannot display the whole wizard. The later detailed-settings view must use the same validated geometry model; trial timeout/rollback remains an unresolved product decision in the behavior contract.
+
 ## Verification
 
 - Unit tests: negative origins; mixed resolutions; noninteger scaling; rotation; adjacent and gapped displays; swapped primary; unplugged/replaced target.
