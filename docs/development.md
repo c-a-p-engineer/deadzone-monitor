@@ -32,6 +32,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [x] Decide **hidden dedicated bar keeps a compact reveal tab inside the healthy main area and a keyboard shortcut** for independent recovery; exact hotkey/tab geometry remain undecided.
 - [x] Decide **v0.1 native Windows taskbar stays unchanged**: run dedicated bar alongside it; defer native hide/reposition features to later investigation.
 - [x] Decide **immediate, confirmation-free global emergency keyboard shortcut** (single activation, not long hold); release guarding, stop rescue movement and cancel pending trials.
+- [x] Decide **default emergency chord plus user customization**, requiring successful registration/keyboard-only test before replacing a working binding; unsuccessful changes revert.
 - [ ] Resolve unresolved parameters and feasibility questions identified in the behavior contract.
 
 ## Phase 1 — safe geometry and pointer proof
@@ -43,6 +44,7 @@ The owner of requirements is [behavior-contract.md](behavior-contract.md); do no
 - [ ] Define and test portal mapping (internal healthy regions and external screens) with a reversible route.
 - [ ] Prototype keyboard-only fail-open, hook release, process death and recovery.
 - [ ] Prototype a normal-desktop **global emergency shortcut** with no confirmation/hold: immediate pointer hook release, window guard shutdown, cancellation of ongoing rescue holds and trial drafts, no same-session automatic re-enable. Test conflicts, repeated keydown and no accessible taskbar/normal mouse.
+- [ ] Prototype **safe emergency shortcut reassignment**: documented default, reject reserved/colliding combinations, maintain prior operational binding during candidate test, confirm new chord using keyboard only, and roll back after cancel/failed registration/interrupted test. Validate laptop layouts and no disabled escape route.
 - [ ] Test edge/center dead zones, different sizes, corners and no-destination boundaries.
 - [ ] Verify on a real Windows laptop with/without an external monitor.
 
@@ -117,7 +119,7 @@ For every future PR: list changed requirement IDs, actual build/test commands, O
 4. **Native taskbar hide/reposition is deferred beyond v0.1**; v0.1 keeps it untouched. Confirm coexistence and document unavailable tray/notification functions. Optional advanced native integration needs a separate feasibility investigation.
 5. Which everyday shell operations work safely from the dedicated UI across Windows versions.
 6. Monitor identity, saved profiles across topology changes, and auto-start mechanics.
-7. Exact keyboard chord for the **agreed immediate emergency disable** and hidden dedicated-bar reveal, whether emergency disabled-state persists across later sign-ins, reveal-tab size/placement, .NET version/packaging and release validation conditions.
+7. Exact **default** keyboard chord for the agreed immediate emergency disable, robust replacement/verification implementation, hidden dedicated-bar reveal shortcut, whether emergency disabled-state persists across later sign-ins, reveal-tab size/placement, .NET version/packaging and release validation conditions. **Default plus user-changeable shortcut and safe rollback are agreed.**
 8. Rescue offer presentation (banner versus dedicated-taskbar button), duplicate/dismiss policy, arrow movement increments, safe-baseline positioning algorithm and fallback for refused moves, and applicability to uncooperative/system windows. **Detection + explicit start and focus-switch persistence** are decided.
 9. Rescue controller's **initial position**, placement persistence and behavior after all rescue sessions end, plus nuanced manual override versus subsequent automatic focus-follow. **One movable/collapsible shared floating panel, expanded on explicit rescue start and manually collapsed/expanded thereafter, with auto-follow and manual picker is agreed.**
 
