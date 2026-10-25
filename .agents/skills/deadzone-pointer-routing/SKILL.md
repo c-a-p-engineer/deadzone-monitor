@@ -35,7 +35,7 @@ Use a **global normal-desktop shortcut** to perform immediate emergency disable 
 
 - Edge and center forbidden rectangles; unequal sizes, negative origins, mixed DPI, gap and orientation.
 - The first boundary touch does **not** jump; continued inward motion does, provided a valid destination exists.
-- Reverse traversal, moving away and pushing again, oscillation, diagonal/corners, high speed and drag.
+- Reverse traversal; partial push, retreat and return to a boundary with zero carried progress; tangential sliding, oscillation, diagonal/corners, high speed and drag.
 - External monitor to left/right, two external monitors, and laptop-alone operation.
 - No accidental click, bounce loop, inability to disable, unbounded CPU or persistent cursor clipping.
 - Actual Windows manual testing of the attempted movement signal and forced-process-exit behavior.
