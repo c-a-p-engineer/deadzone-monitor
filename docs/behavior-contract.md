@@ -24,6 +24,7 @@ The initial user scenario is a broken left portion of a built-in laptop panel, b
 | Number of zones | **Initial design boundary** | One rectangular dead zone per selected monitor profile initially; multiple regions are a future extension, not yet agreed for initial delivery. |
 | Workspaces | **Agreed** | Exactly one user-selected **main work area**, with remaining intact areas available as **auxiliary areas**. |
 | Pointer crossing | **Agreed: push-through (B)** | A pointer stops at the boundary first; further deliberate inward movement jumps to reachable healthy space. Sensitivity is user-adjustable; 40 px-equivalent is a *provisional* default for testing, not a measured optimum. |
+| Push-through reset on leaving boundary | **Agreed: reset immediately (A)** | When the cursor leaves the blocked edge **back into a healthy area**, discard accumulated inward attempted movement. A later boundary contact starts from zero; no previously accumulated push contributes to a jump. Motion tangential to a still-contacted edge is not itself a departure. |
 | External screens | **Agreed** | Use Windows' existing monitor layout, native physical sizes and relative positions to choose crossing destinations without changing OS display configuration. Reach external screens and return even when dead pixels intervene. |
 | Windows | **Agreed** | Keep supported windows wholly inside intact space when possible: move first, resize if needed, and use the main rectangle for maximize. Do not disturb valid auxiliary placements. |
 | Taskbar | **Agreed** | Dedicated familiar Windows-style taskbar fitted completely inside the main rectangle, dockable on its top, bottom, left or right edge (default bottom), with suitable horizontal/vertical layout. |
@@ -53,7 +54,7 @@ The initial user scenario is a broken left portion of a built-in laptop panel, b
 - **Allowed area:** the selected display bounds minus the dead zone, plus entirely accessible external displays.
 - **Main work area:** one user-chosen axis-aligned rectangle wholly within an intact part of the target display. The UI may offer a best-fit suggestion; the user can choose another valid rectangle. It hosts maximize and the dedicated taskbar.
 - **Auxiliary areas:** any other intact display portions outside the main work area. They remain pointer-reachable and can host manually placed windows. These are **not** independent Windows monitors and need not be separate, nonoverlapping 'virtual monitor' objects.
-- **Push-through:** explicit continued inward movement at the excluded boundary. Users can tune sensitivity. A 40 px-equivalent threshold is a **trial default**, not a validated physical mouse-distance measurement; input units, reset/decay rules and destination mapping are **still open**.
+- **Push-through:** explicit continued inward movement at the excluded boundary. Users can tune sensitivity. A 40 px-equivalent threshold is a **trial default**, not a validated physical mouse-distance measurement. **Reset rule agreed:** once the cursor moves away from the boundary into allowed space, clear the accumulated attempted inward movement; returning requires a new full deliberate push. Moving tangentially while still at the boundary is not itself departure. Precise sensor jitter tolerance, input units, corner transitions and destination mapping still require prototype tests.
 - **Monitor layout:** retain actual Windows monitor identifiers, resolution, relative layout and physical geometry. Jump mapping uses the existing topology; it does not reconfigure the displays.
 
 ## Behavioral requirements and acceptance
@@ -69,6 +70,7 @@ The initial user scenario is a broken left portion of a built-in laptop panel, b
 | DZ-01 | Select a physical target display and define a rectangular dead zone anywhere on it. | Coordinates are editable in physical px, visual preview matches them, and a center rectangle as well as an edge rectangle are accepted. |
 | DZ-02 | Select one intact main work rectangle, leaving all other healthy pixels usable as auxiliary space. | No main rectangle overlaps the forbidden area; selection can be changed without editing code; auxiliary areas remain pointer-reachable. |
 | DZ-03 | Prevent supported normal-desktop pointer movement into the dead zone while guarding is enabled. | Boundary and high-speed entry tests do not leave the pointer in the forbidden region under the supported input paths. |
+| DZ-34 | **Reset push-through accumulation after leaving a blocked boundary.** | Build partial inward push without jumping, move back into intact space, and contact the same or another blocked boundary: accumulated push is zero and a fresh complete deliberate push is needed to cross. No delayed/partial carryover causes a jump. Sliding along the edge without actually leaving it is not misclassified as leaving. Test with mouse and touchpad at corners and multiple monitors. |
 | DZ-04 | Use **push-through** crossing between reachable intact areas, not immediate jump-on-contact. | At a boundary, first stop; continued movement deliberately transfers to a valid target. No reachable target means stop (no spurious teleport). Reverse travel works. |
 | DZ-05 | Preserve normal access to every connected external monitor. | Left/right external screens, two external screens, negative coordinates, and dead-zone crossings allow deliberate outward and return movement. |
 | DZ-06 | Prefer main-area placement for ordinary new/restore/maximize windows, and rescue inaccessible windows. | Ordinary supported windows remain operable on the intact screen; auxiliary placement by user is preserved where possible; external-display windows are not repositioned. |
@@ -213,7 +215,7 @@ Deterministic geometry tests alone are insufficient: pointer hooks, Windows shel
 
 ## Open decisions (not silently treated as agreed)
 
-- Final calibrated push-through distance/units (trial default 40 px-equivalent), movement accumulation/reset, corner handling, and unambiguous destination mapping that respects the existing Windows layout.
+- Final calibrated push-through distance/units (trial default 40 px-equivalent), sensor jitter tolerances and corner/tangential handling, and unambiguous destination mapping that respects the existing Windows layout. **Reset on leaving the boundary is agreed.**
 - Precise main-area automatic suggestion and restrictions for very small surviving areas.
 - Whether a center hole's tiny surviving strips are suitable auxiliary areas or should be optional.
 - Native taskbar modification/hiding is **out of v0.1** and may be researched in a separately approved later phase; third-party tray/notification fallback remains a scope and feasibility question.
