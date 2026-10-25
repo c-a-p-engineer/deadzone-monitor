@@ -120,9 +120,15 @@ Before applying a user edit, classify its impact on reachability. For a critical
 
 ### Emergency shortcut and fail-open shutdown
 
-A **global shortcut on the normal user desktop** must execute emergency disable on a single activation: no confirmation prompt, hold timer or modal UI dependency. Give release of pointer interception/topology gating highest priority; stop WindowGuard and current rescue-hold movement, invalidate active rescue exception sessions, and cancel any pending configuration trial without committing the draft. The emergency route must not wait for window repositioning or the 60-second timeout. Suppress immediate same-session auto-reactivation after emergency disable. Re-enabling requires deliberate user action and revalidation. **Whether this disabled preference survives future sign-ins remains an open user decision.**
+A **global shortcut on the normal user desktop** must execute emergency disable on a single activation: no confirmation prompt, hold timer or modal UI dependency. Give release of pointer interception/topology gating highest priority; stop WindowGuard and current rescue-hold movement, invalidate active rescue exception sessions, and cancel any pending configuration trial without committing the draft. The emergency route must not wait for window repositioning or the 60-second timeout. A global emergency stop also sets a **durable per-user emergency-disabled latch**. This latch survives application restarts, sign-out and Windows reboot; it overrides the previously enabled profile and any post-login autostart restoration. Re-enabling requires deliberate user action and revalidation of target topology and escape shortcut before clearing the latch. An interrupted or failed re-enable must leave the latch active.
 
 Use a documented **default emergency chord** for first enable, with a user-configurable replacement. Changing it must be transactional: retain the previously confirmed functional binding while validating that the candidate is non-reserved, registerable and operable via a keyboard-only demonstration; only commit the replacement after a successful test. If a temporary dual-registration strategy is infeasible on supported Windows configurations, fail the candidate transaction and retain the original until an equally safe replacement method is validated. On cancellation, registration/test failure or interruption, roll back to the old binding rather than leaving no escape path. Do not log key content. Investigate minimally intrusive user-level hotkey registration, focus conflicts and keyboard layout variations on Windows. Handle repeat key-down idempotently. Do not claim operation on secure UAC/logon desktops or exclusive fullscreen without evidence. Test that the emergency path can be reached when the dedicated taskbar and rescue panel are hidden, and ensure unexpected process exit releases any transient interception.
+
+### Persistent emergency-disable safety gate
+
+Separate `lastConfirmedProfile` from a persistent `emergencyDisabled` safety latch. At startup, read the latch **before** restoring hooks, window guards or rescue state. If the latch is present or its status cannot be trusted, fail open and optionally show a keyboard-reachable disabled/status page; never silently resume guarding. On an emergency shortcut, immediately release interception, stop active rescue motion and abandon draft trials, then record the persistent latch through a crash-safe atomic settings update. Implement ordering/recovery so an interrupted durable write cannot cause unexpected next-boot guarding: if the marker/profile state is indeterminate, start disabled. Persist the profile for an eventual deliberate re-enable but do not activate it automatically.
+
+A manual re-enable attempt must validate the current monitor topology, enabled profile and registered working emergency shortcut, and respect the existing trial/confirmation safeguards when appropriate; only successful explicit activation clears the emergency latch. If validation, confirmation or persistence fails, remain emergency-disabled. The app may auto-start as an **inactive settings/status UI** but must not auto-enable hooks. Windows integration and crash/reboot simulation are required before shipping.
 
 ## Startup, persistence and recovery
 
@@ -133,11 +139,14 @@ ACTIVE       --[topology mismatch/error]----> FAIL_OPEN
 DISABLED     --[explicit enable + valid profile]--> ACTIVE
 FAIL_OPEN    --[validated recovery + allowed restart]--> ACTIVE
 ACTIVE --[sign-out/process exit]--> OS native pointer behavior
-next sign-in --[saved last-enabled profile + valid target]--> ACTIVE
+EMERGENCY_DISABLED --[explicit valid and confirmed enable]--> ACTIVE
+ACTIVE --[emergency shortcut]----------------> EMERGENCY_DISABLED (persisted latch)
+next sign-in --[emergencyDisabled or unreadable safety state]--> EMERGENCY_DISABLED / FAIL_OPEN
+next sign-in --[not emergency-disabled + saved valid target]--> ACTIVE
 next sign-in --[invalid/missing/ambiguous target]---------> FAIL_OPEN
 ```
 
-Persist settings for the Windows user, not device-wide driver state. Subsequent **sign-in** autostart with the last intentionally enabled profile is required; initial install/first run does not silently enable blocking. Resolve how a user who explicitly disabled the feature expects persistence before implementation—never override a deliberate disable.
+Persist settings for the Windows user, not device-wide driver state. Subsequent **sign-in** autostart with the last intentionally enabled profile is required **only while the persisted emergency-disabled latch is clear**; initial install/first run does not silently enable blocking. Resolve how a user who explicitly disabled the feature expects persistence before implementation—never override a deliberate disable.
 
 A keyboard-only emergency disable must work without a visible shell, tray or external monitor. Disabling/exit/crash must leave no persistent `ClipCursor`, injected driver, modified resolution or blocked input. Topology changes must be applied atomically or guarded mode suspended.
 
